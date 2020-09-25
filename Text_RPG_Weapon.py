@@ -13,18 +13,27 @@ class Weapon(object):
 
 class TrustyDagger(Weapon):
     name = 'Trusty Dagger'
-    damage = (15, 20)
-    durabilityDecrease = 5
+    damage = (12, 18)
+    durabilityDecrease = 2
     cost = 25 #make random
 
 class Fists(Weapon):
     name = 'Fists'
-    damage = (8, 10)
+    damage = (4, 5)
     durabilityDecrease = 0 #fists should not break
     def __str__(self):
         rep = self.name + ': Deals ' + str(self.damage) + ' Damage'
         return rep
-
+class BattleAxe(Weapon):
+    name = "Battle Axe"
+    damage = (20,30)
+    durabilityDecrease = 3
+    cost = 50
+class ShoddyShank(Weapon):
+    name = 'Shoddy Shank'
+    damage = (9,12) 
+    durabilityDecrease = 8 #alright ima just check out this code, could come in handy
+    cost = 10
 if __name__ == "__main__":
     print("This is a module that contains weapon data for the game.")
     input("\n\nPress the enter key to exit.")

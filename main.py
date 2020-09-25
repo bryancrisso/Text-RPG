@@ -308,7 +308,6 @@ class Game(object):
     def intro(self, player):
         print("You are exploring a dark dungeon that contains many wild and unknown species of animals.\nApparently there are also some dangerous mutants...")
         print("How many floors can you explore before you die...")
-        print("MUHAHAHAHAHAHAAAAAAAAAAAAAAAAAAAAAAAA!")
         print("GOOD LUCK!")
         print()
         self.pause(player)
