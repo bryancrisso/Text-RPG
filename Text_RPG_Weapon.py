@@ -27,13 +27,23 @@ class Fists(Weapon):
 class BattleAxe(Weapon):
     name = "Battle Axe"
     damage = (20,30)
-    durabilityDecrease = 3
+    durabilityDecrease = 4
     cost = 50
 class ShoddyShank(Weapon):
     name = 'Shoddy Shank'
     damage = (9,12) 
-    durabilityDecrease = 8 #alright ima just check out this code, could come in handy
+    durabilityDecrease = 8
     cost = 10
+class Lance(Weapon):
+    name = 'Lance'
+    damage = (10,40)
+    durabilityDecrease = 3
+    cost = 40
+class Katana(Weapon):
+    name = 'Katana'
+    damage = (25,45)
+    durabilityDecrease = 2
+    cost = 70
 if __name__ == "__main__":
     print("This is a module that contains weapon data for the game.")
     input("\n\nPress the enter key to exit.")
