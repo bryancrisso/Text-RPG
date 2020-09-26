@@ -1,6 +1,7 @@
-import random, pickle, time
+import random, pickle
 from Text_RPG_Food import *
 from dictionaries import *
+from Text_RPG_Enemy import *
 
 
 
@@ -42,6 +43,8 @@ Items needed:
 13: add __str__ function not needed currently
 14: Save and load stats O
 15: Create the GAME and GAMEPLAY X
+16: bug: stackable item number is deleted between saves
+17: implement escape failed message
 """
 
 #player class
@@ -53,8 +56,9 @@ class Player(object):
     currentWeapon = None
 
     inventory = []
+    stackInventory = {}
 
-    gold = None
+    gold = 0
 
     playerName = ''
 
@@ -68,17 +72,17 @@ class Player(object):
                 i += 1
             else:
                 placeholder = item()
-                print(repr(placeholder) + " - Amount: " + str(item.amount))
+                print(repr(placeholder) + " - Amount: " + str(self.stackInventory[item]))
                 i += 1
 
     def inventoryAdd(self, item): #Add an item to the player's inventory
         try:
             if item.isStackable:
                 if item in self.inventory:
-                    self.inventory[self.inventory.index(item)].amount += 1
+                    self.stackInventory[item] += 1
                 else:
                     self.inventory.append(item)
-                    self.inventory[self.inventory.index(item)].amount += 1
+                    self.stackInventory[item] += 1
             else:
                 self.inventory.append(item())
         except:
@@ -86,8 +90,8 @@ class Player(object):
 
     def inventoryRemove(self, itemNum): #delete an item from the player's inventory
         if self.inventory[itemNum].isStackable:
-            self.inventory[itemNum].amount -=1
-            if self.inventory[itemNum].amount == 0:
+            self.stackInventory[self.inventory[itemNum]] -= 1
+            if self.stackInventory[self.inventory[itemNum]] <= 0:
                 self.inventory.remove(self.inventory[itemNum])
         else:
             self.inventory.remove(self.inventory[itemNum])
@@ -97,16 +101,24 @@ class Player(object):
         pfile = open('inventory.dat', 'wb')
         pickle.dump(inventoryList, pfile)
         pfile.close()
-        print('Inventory Saved\n')
         del pfile
+        sfile = open("stackables.dat", 'wb')
+        pickle.dump(self.stackInventory, sfile)
+        sfile.close()
+        del sfile
+        print('Inventory Saved\n')
 
     def loadInventory(self): #Load the inventory from the inventory.dat file
         print('Loading Inventory...')
         pfile = open('inventory.dat', 'rb')
         inv = pickle.load(pfile)
         pfile.close()
+        sfile = open('stackables.dat', 'rb')
+        self.stackInventory = pickle.load(sfile)
+        sfile.close()
         print('Inventory Loaded\n')
         del pfile
+        del sfile
         return inv
 
     #check if its the first time playing
@@ -196,7 +208,6 @@ class Player(object):
         while True:
             print('Use 0 to cancel')
             
-
             try:
                 choiceNum = int(input('Choice  ['))
                 if choiceNum == 0:
@@ -260,13 +271,20 @@ class Player(object):
             self.saveInventory(self.inventory)
 
     def attack(self, enemy):
-        enemy.currentHealth -= random.randint(self.currentWeapon.damage[0],self.currentWeapon.damage[1])
+        damage = random.randint(self.currentWeapon.damage[0],self.currentWeapon.damage[1])
+        enemy.currentHealth -= damage
         self.weaponDurabilityDecrease()
+        print(f"You dealt {str(damage)} to {enemy.name}!")
 
     def damage(self, damage):
         self.currentHealth -= damage
         print("You took " + str(damage) + " damage!")
-
+    def death(self):
+        #goes back to last save
+        print("YOU DIED...")
+        print("Going back to last save point...")
+        self.loadInventory()
+        self.loadStats()
     def __init__(self, newGame):
         firstTime = self.firstTimeManager()
         if newGame:
@@ -274,8 +292,8 @@ class Player(object):
         if firstTime == True:
             #select name
             self.setName()
-        else:
-            None
+        for item in foodDictionary:
+            self.stackInventory[item] = 0
         self.setInventory(self.inventory, firstTime, defaultItems)
         self.setStats(firstTime)
         self.displayStats()
@@ -300,11 +318,11 @@ class Game(object):
             player = Player(True)
             self.intro(player)
         elif choice == 2:
-            try:
-                player = Player(False)
-                self.pause(player)
-            except:
-                print('There was an error! Maybe there isn\'t a saved game?')
+            #try:
+            player = Player(False)
+            self.pause(player)
+            #except:
+            #    print('There was an error! Maybe there isn\'t a saved game?')
     def intro(self, player):
         print("You are exploring a dark dungeon that contains many wild and unknown species of animals.\nApparently there are also some dangerous mutants...")
         print("How many floors can you explore before you die...")
@@ -316,13 +334,14 @@ class Game(object):
         while True:
             print("What do you want to do?")
             #eat, select weapon, save game, and continue
-            choices = ['1','2','3','4', '5']
+            choices = ['1','2','3','4', '5', '6']
             print("""
             1 - Eat
             2 - Select Weapon
             3 - View Stats and Inventory
             4 - Save Game
-            5 - Continue""")
+            5 - Continue
+            6 - Fight a random monster (Dev Feature)""")
             choice = input("Choice: ")
             if choice in choices:
                 if choice == '1':
@@ -337,9 +356,55 @@ class Game(object):
                 elif choice == '5':
                     print("Sorry! feature not implemented yet")
                     player.damage(10)
+                elif choice == '6':
+                    self.battle(player, random.choice([Mutant, Brute, Skeleton, KnifeGoblin]))
             else:
                 print("Invalid number!")
-        
+    def encounter(self, player, enemy):
+        choice = ""
+        choices = ['1','2','3','4','5']
+        print("What do you do?")
+        print("""
+        1 - Attack the Enemy
+        2 - Attempt to Escape
+        3 - Eat
+        4 - Select Weapon
+        5 - View Stats and Inventory""")
+        while choice not in choices:
+            choice = input("Choice: ")
+            if choice in choices:
+                if choice == '1':
+                    player.attack(enemy)
+                    print(f"{enemy.name} has {str(enemy.currentHealth)} health left.")
+                elif choice == '2':
+                    return random.choice([True,False])
+                elif choice == '3':
+                    player.eat()
+                elif choice == '4':
+                    player.selectWeapon()
+                elif choice == '5':
+                    player.displayStats()
+                return False
+            else:
+                print("Invalid number!")
+                return False
+    def battle(self, player, enemy):
+        localEnemy = enemy()
+        print(f"You face a {localEnemy.name}")
+        while localEnemy.currentHealth > 0 and player.currentHealth > 0:
+            escape = self.encounter(player, localEnemy)
+            if escape:
+                print("You escaped!")
+                break
+            player.damage(random.randint(enemy.damage[0], enemy.damage[1]))
+        if player.currentHealth <= 0:
+            player.death()
+            del localEnemy
+        elif localEnemy.currentHealth <= 0:
+            print(f"You defeated the {localEnemy.name}")
+            player.gold += random.randint(localEnemy.gold[0], localEnemy.gold[1])
+            del localEnemy
+            player.displayStats()
 
     def __init__(self):
         self.mainMenu()

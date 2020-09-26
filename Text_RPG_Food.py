@@ -42,8 +42,28 @@ class Beans(Food):
     #healthRegen = 20 ! CHANCE OF DAMAGING PLAYER?
     #cost = 10        ! dk how to impliment
 
+class Cherries(Food):
+    name = 'Cherries'
+    healthRegen = 2
+    cost = 3
 
+class Steak(Food):
+    name = 'Steak'
+    healthRegen = 70
+    cost = 50
 
+class TinOfBiscuits(Food):
+    name = 'Tin of Biscuits'
+    healthRegen = 9
+    cost = 10
+
+class BleachBottle(Food):
+    name = 'Bleach Bottle'
+    healthRegen = -10
+    cost = 15
+    #Put effect of removing posion and whatnot
+
+#make food better value if you pay more
 if __name__ == "__main__":
     print("This is a module that contains food data for the game.")
     input("\n\nPress the enter key to exit.")

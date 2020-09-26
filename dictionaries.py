@@ -4,7 +4,7 @@ from Text_RPG_Weapon import *
 
 
 
-foodDictionary = [Bread, Apple, CornishPasty, SteamedHam, Beans]
+foodDictionary = [Bread, Apple, CornishPasty, SteamedHam, Beans, Cherries, Steak, TinOfBiscuits, BleachBottle]
 
 weaponDictionary = [Fists, TrustyDagger, ShoddyShank, BattleAxe, Lance, Katana, Club]
 
