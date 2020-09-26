@@ -31,6 +31,12 @@ class SteamedHam(Food):
     name = 'Steamed Ham'
     healthRegen = 60
     cost = 45
+
+class Beans(Food):
+    name = 'Beans'
+    healthRegen = 1
+    cost = 2
+
 #class BatStew(Food):
     #name = 'Bat Stew'
     #healthRegen = 20 ! CHANCE OF DAMAGING PLAYER?
