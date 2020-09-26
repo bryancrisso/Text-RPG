@@ -34,6 +34,11 @@ class ShoddyShank(Weapon):
     damage = (9,12) 
     durabilityDecrease = 8
     cost = 10
+class Club(Weapon):
+    name = 'Club'
+    damage = (7,9) 
+    durabilityDecrease = 4
+    cost = 10
 class Lance(Weapon):
     name = 'Lance'
     damage = (10,40)
