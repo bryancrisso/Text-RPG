@@ -10,13 +10,11 @@ class Weapon(object):
         rep = self.name + ': Deals ' + str(self.damage) + ' Damage | ' + 'Current Durability is ' + str(self.durability) + '%'
         return rep
 
-
 class TrustyDagger(Weapon):
     name = 'Trusty Dagger'
     damage = (12, 18)
     durabilityDecrease = 2
     cost = 25 #make random
-
 class Fists(Weapon):
     name = 'Fists'
     damage = (4, 5)
