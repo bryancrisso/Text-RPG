@@ -5,6 +5,7 @@ class Food(object):
     cost = 0
     isStackable = True
     amount = 0
+    tier = (0,0)
     def __str__(self):
         rep = self.name + ': Regenerates ' + str(self.healthRegen) + ' Health'
         return rep

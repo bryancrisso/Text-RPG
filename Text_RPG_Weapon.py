@@ -6,6 +6,7 @@ class Weapon(object):
     durabilityDecrease = 0 #by how much percent the durability decreases
     cost = 0
     isStackable = False
+    tier = (0,0)
     def __str__(self):
         rep = self.name + ': Deals ' + str(self.damage) + ' Damage | ' + 'Current Durability is ' + str(self.durability) + '%'
         return rep
