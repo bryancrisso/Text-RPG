@@ -4,6 +4,7 @@ from dictionaries import *
 from Text_RPG_Enemy import *
 from colorama import Back, Fore, Style
 import generator
+from math import sqrt
 
 #create time.txt and inventory.dat and stats.dat
 f = open('time.txt', 'a')
@@ -106,8 +107,7 @@ class Player(object):
         except:
             print('Something went wrong while adding to the inventory!')
 
-    def inventoryRemove(self,
-                        itemNum):  #delete an item from the player's inventory
+    def inventoryRemove(self, itemNum):  #delete an item from the player's inventory
         if self.inventory[itemNum].isStackable:
             self.stackInventory[self.inventory[itemNum]] -= 1
             if self.stackInventory[self.inventory[itemNum]] <= 0:
@@ -517,17 +517,13 @@ class DungeonCreator(object):
         extraRooms = 2
         currentRooms = baseRooms * difficulty + extraRooms
         ratio = (4, 3)
-        if difficulty == 1:
-            currentRatio = (ratio[0]*2, ratio[1]*2)
-        else:
-            #rework this system more efficiently because atm it is very inefficient with nonexistent room space
-            currentRatio = (ratio[0]*difficulty, ratio[1]*difficulty)
+        currentRatio = self.findFloorSize(currentRooms*2, ratio[0], ratio[1])
+        print(currentRatio)
 
-        floorArray = generator.generator.generate((currentRatio[0], currentRatio[1]), currentRooms)
+        floorArray = generator.generator.generate(currentRatio, currentRooms)
         floorArray = generator.generator.createConnections(floorArray)
         floorArray = self.populateFloor(floorArray, floor)
         return floorArray
-
 
     def populateFloor(self, array, floor = 1):
         difficulty = floor//10 + 1
@@ -561,5 +557,10 @@ class DungeonCreator(object):
                         elif content == 'T':
                             j.loot = Bread
         return array
+    def findFloorSize(self, a, d, e): #find the factors, b and c, of a, in the ratio d and e
+        b = round(d*sqrt(a/(d*e)))
+        c = round(e*sqrt(a/(d*e)))
+        return (b, c)
+        
 dungeon = DungeonCreator()
 game = Game()
