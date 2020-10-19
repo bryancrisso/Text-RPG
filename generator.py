@@ -106,10 +106,17 @@ class Generator(object):
     def displayMap(self, mapList, playerPos = [-1, -1]):
         for i in mapList:
             for j in i:
-                if playerPos != [-1,-1]:
-                    if j == mapList[playerPos[1]][playerPos[0]]:
-                        print(Back.RED, end='')
-                print(j.content, end='')
+                if j.content != 'n':
+                    if j.explored:
+                        print(Back.GREEN, end='')
+                    else:
+                        print(Back.YELLOW, end='')
+                    if playerPos != [-1,-1]:
+                        if j == mapList[playerPos[1]][playerPos[0]]:
+                            print(Back.RED, end='')
+                    print(j.content, end='')
+                else:
+                    print(' ', end='')
                 print(Style.RESET_ALL, end='')
             print()
     #def __init__(self):

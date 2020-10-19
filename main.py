@@ -320,8 +320,14 @@ class Player(object):
     def death(self):
         #goes back to last save
         os.system('clear||cls')
-        print(cDict['bRed'], end='')
-        print("YOU DIED...")
+        print(cDict['red'], end='')
+        print(r'''
+_____.___.              ________  .__           .___
+\__  |   | ____  __ __  \______ \ |__| ____   __| _/
+ /   |   |/  _ \|  |  \  |    |  \|  |/ __ \ / __ | 
+ \____   (  <_> )  |  /  |    `   \  \  ___// /_/ | 
+ / ______|\____/|____/  /_______  /__|\___  >____ | 
+ \/                             \/        \/     \/ ''')
         print("Going back to last save point...\n")
         print(cDict['reset'], end='')
         self.inventory = self.loadInventory()
@@ -345,7 +351,14 @@ class Player(object):
 class Game(object):
     def mainMenu(self):
         colorama.init()
-        print('Welcome to the Text RPG')
+        print('Welcome to:' + cDict['red'], end='')
+        print(r'''
+___________              __ ____________________  ________ 
+\__    ___/___ ___  ____/  |\______   \______   \/  _____/ 
+  |    |_/ __ \\  \/  /\   __\       _/|     ___/   \  ___ 
+  |    |\  ___/ >    <  |  | |    |   \|    |   \    \_\  \
+  |____| \___  >__/\_ \ |__| |____|_  /|____|    \______  /
+             \/      \/             \/                  \/ ''')
         print(cDict['green'], end='')
         print('''
         1-Create new game
@@ -420,13 +433,17 @@ class Game(object):
         choice = []
         floor = player.floorList[player.currentFloor-1]
         generator.generator.displayMap(floor, player.playerLocation)
-        directions = ['n','e','s','w']
-        DIRECTIONS = ['n','e','s','w']
+        directions = ['n','e','s','w', 'u', 'd']
+        DIRECTIONS = ['n','e','s','w', 'u', 'd']
         print(f'Current Player Location: {player.playerLocation}')
         print(f'Content of Current Location is {floor[player.playerLocation[1]][player.playerLocation[0]].content}')
         for i in range(4):
             if floor[player.playerLocation[1]][player.playerLocation[0]].connections[i] == False: #since floor coords are (y,x) and player coords are (x,y), we flip them around
                 directions.remove(DIRECTIONS[i])
+        if floor[player.playerLocation[1]][player.playerLocation[0]].content != 'D':
+            directions.remove('d')
+        if floor[player.playerLocation[1]][player.playerLocation[0]].content != 'U' or player.currentFloor == 1:
+            directions.remove('u')
         while choice not in directions:
             print("Which way would you like to go?")
             if 'n' in directions:
@@ -437,6 +454,10 @@ class Game(object):
                 print("S - Go to the room to the South")
             if 'w' in directions:
                 print("W - Go to the room to the West")
+            if 'u' in directions:
+                print("U - Go up the staircase")
+            if 'd' in directions:
+                print("D - Go down the staircase")
             choice = input("Which direction to go? ").lower()
         if choice == 'n':
             player.playerLocation[1] -= 1 #decrease y coord
@@ -446,8 +467,51 @@ class Game(object):
             player.playerLocation[1] += 1 #increase y coord
         elif choice == 'w':
             player.playerLocation[0] -= 1 #decrease x coord
+        elif choice == 'u':
+            player.playerLocation = [0,0]
+            player.currentFloor -= 1
+            print("You went back one floor")
+            print("Your current floor is now " + str(player.currentFloor))
+        elif choice == 'd':
+            player.playerLocation = [0,0]
+            if player.currentFloor == len(player.floorList):
+                player.currentFloor += 1
+                player.floorList.append(dungeon.createFloor(player.currentFloor))
+            else:
+                player.currentFloor += 1
+            print("You went down one floor")
+            print("Your current floor is now " + str(player.currentFloor))
         print(f'New Player Location: {player.playerLocation}')
         print(f'Content of New Location is {floor[player.playerLocation[1]][player.playerLocation[0]].content}')
+        input(cDict['bGreen'] + cDict['black'] + cDict['bright'] + 'Press Enter To Continue' + cDict['reset'])
+        os.system('cls||clear')
+        self.floorInteraction(floor[player.playerLocation[1]][player.playerLocation[0]], player)
+
+    
+    def floorInteraction(self, room, player):
+        print("You enter the room...")
+        floor = player.floorList[player.currentFloor-1]
+        room = floor[player.playerLocation[1]][player.playerLocation[0]]
+        if not room.explored:
+            if room.content == 'F':
+                self.battle(player, room.enemy) #make it if escaped, room is still unexplored
+                room.explored = True
+            elif room.content == 'L':
+                print("You found a loot chest!")
+                print("You open the loot chest...")
+                print(f"You received {room.loot.name} from the chest")
+                player.inventoryAdd(room.loot)
+                room.explored = True
+            elif room.content == 'T':
+                print("Trader is not implemented yet. Have some loot!")
+                print(f"You received {room.loot.name}")
+                player.inventoryAdd(room.loot)
+            elif room.content == 'U' and player.currentFloor != 1:
+                print("You find a staircase going upwards.")
+            elif room.content == 'D':
+                print("You find a staircase going downwards.")
+        else:
+            print("It's just an empty room.")
         
 
     def encounter(self, player, enemy):
@@ -518,7 +582,7 @@ class DungeonCreator(object):
         currentRooms = baseRooms * difficulty + extraRooms
         ratio = (4, 3)
         currentRatio = self.findFloorSize(currentRooms*2, ratio[0], ratio[1])
-        print(currentRatio)
+        #print(currentRatio)
 
         floorArray = generator.generator.generate(currentRatio, currentRooms)
         floorArray = generator.generator.createConnections(floorArray)
@@ -547,7 +611,7 @@ class DungeonCreator(object):
                         if content == 'F':
                             eligibleEnemies = []
                             for enemy in enemyDictionary:
-                                if floor > enemy.level[0] and floor < enemy.level[1]:
+                                if floor >= enemy.level[0] and floor <= enemy.level[1]:
                                     eligibleEnemies.append(enemy)
                             if eligibleEnemies == []:
                                 eligibleEnemies = enemyDictionary
