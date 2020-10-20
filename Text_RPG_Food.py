@@ -53,7 +53,7 @@ class Steak(Food):
     name = 'Steak'
     healthRegen = 70
     cost = 50
-  level = (10,30)
+    level = (10,30)
 class TinOfBiscuits(Food):
     name = 'Tin of Biscuits'
     healthRegen = 9

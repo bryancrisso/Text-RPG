@@ -60,5 +60,5 @@ class ThiccArab(Enemy):
     type = 'enemy'  
     maxHealth = 130
     damage = (20,30)
-    level = (10,20)
+    level = (15,30)
     gold = (80,100)

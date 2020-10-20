@@ -242,6 +242,7 @@ class Player(object):
                 break
             except:
                 print("Invalid number!")
+        selected = False
         for i in foodDictionary:
             if choice.name == i.name:
                 print('The item you chose exists as a food item!')
@@ -506,10 +507,13 @@ ___________              __ ____________________  ________
                 print("Trader is not implemented yet. Have some loot!")
                 print(f"You received {room.loot.name}")
                 player.inventoryAdd(room.loot)
+                room.explored = True
             elif room.content == 'U' and player.currentFloor != 1:
                 print("You find a staircase going upwards.")
+                room.explored = True
             elif room.content == 'D':
                 print("You find a staircase going downwards.")
+                room.explored = True
         else:
             print("It's just an empty room.")
         
@@ -617,9 +621,21 @@ class DungeonCreator(object):
                                 eligibleEnemies = enemyDictionary
                             j.enemy = random.choice(eligibleEnemies)
                         elif content == 'L':
-                            j.loot = Bread
-                        elif content == 'T':
-                            j.loot = Bread
+                            eligibleLoot = []
+                            for item in itemDictionary:
+                                if floor >= item.level[0] and floor <= item.level[1]:
+                                    eligibleLoot.append(item)
+                            if eligibleLoot == []:
+                                eligibleLoot = itemDictionary
+                            j.loot = random.choice(eligibleLoot)
+                        elif content == 'T': # since traders are not implemented yet, they are just a renamed loot chest
+                            eligibleLoot = []
+                            for item in itemDictionary:
+                                if floor >= item.level[0] and floor <= item.level[1]:
+                                    eligibleLoot.append(item)
+                            if eligibleLoot == []:
+                                eligibleLoot = itemDictionary
+                            j.loot = random.choice(eligibleLoot)
         return array
     def findFloorSize(self, a, d, e): #find the factors, b and c, of a, in the ratio d and e
         b = round(d*sqrt(a/(d*e)))
