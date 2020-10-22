@@ -285,7 +285,10 @@ class Player(object):
         if not selected:
             print('The item you chose does not exist, or is not a weapon')
             print('Defaulting to fists')
-            self.currentWeapon = Fists()
+            for i in self.inventory:
+                if i.name == "Fists":
+                    self.currentWeapon = i
+                    break
             #self.saveStats()
         input(cDict['bGreen'] + cDict['black'] + cDict['bright'] + 'Press Enter To Continue' + cDict['reset'])
         os.system('cls||clear')
@@ -295,8 +298,7 @@ class Player(object):
         if self.currentWeapon.durability <= 0:
             print('Your ' + self.currentWeapon.name + ' broke!')
             print('You must now select a new weapon')
-            self.inventoryRemove(self.inventory[self.inventory.index(
-                self.currentWeapon)])
+            self.inventoryRemove(self.inventory.index(self.currentWeapon))
             self.currentWeapon.durability = 100
             self.selectWeapon()
             #self.saveInventory(self.inventory)
@@ -401,7 +403,7 @@ ___________              __ ____________________  ________
             print("What do you want to do?")
             print(cDict['green'], end='')
             #eat, select weapon, save game, and continue
-            choices = ['1', '2', '3', '4', '5', '6']
+            choices = ['1', '2', '3', '4', '5'] #temporarily removed choice '6'
             print("""
         1 - Eat
         2 - Select Weapon
@@ -482,6 +484,8 @@ ___________              __ ____________________  ________
                 player.currentFloor += 1
             print("You went down one floor")
             print("Your current floor is now " + str(player.currentFloor))
+            player.saveStats()
+            player.saveInventory(player.inventory)
         print(f'New Player Location: {player.playerLocation}')
         print(f'Content of New Location is {floor[player.playerLocation[1]][player.playerLocation[0]].content}')
         input(cDict['bGreen'] + cDict['black'] + cDict['bright'] + 'Press Enter To Continue' + cDict['reset'])
@@ -500,13 +504,15 @@ ___________              __ ____________________  ________
             elif room.content == 'L':
                 print("You found a loot chest!")
                 print("You open the loot chest...")
-                print(f"You received {room.loot.name} from the chest")
-                player.inventoryAdd(room.loot)
+                for item in room.loot:
+                    print(f"You received {item.name} from the chest")
+                    player.inventoryAdd(item)
                 room.explored = True
             elif room.content == 'T':
                 print("Trader is not implemented yet. Have some loot!")
-                print(f"You received {room.loot.name}")
-                player.inventoryAdd(room.loot)
+                for item in room.loot:
+                    print(f"You received {item.name} from the chest")
+                    player.inventoryAdd(item)
                 room.explored = True
             elif room.content == 'U' and player.currentFloor != 1:
                 print("You find a staircase going upwards.")
@@ -553,7 +559,7 @@ ___________              __ ____________________  ________
 
     def battle(self, player, enemy):
         localEnemy = enemy()
-        print(f"You face a {localEnemy.name}")
+        print(f"You face a {localEnemy}")
         while localEnemy.currentHealth > 0 and player.currentHealth > 0:
             escape = self.encounter(player, localEnemy)
             if escape == 1:
@@ -561,7 +567,8 @@ ___________              __ ____________________  ________
                 break
             elif escape == 2:
                 print("You failed to escape!")
-            player.damage(random.randint(enemy.damage[0], enemy.damage[1]), False)
+            if localEnemy.currentHealth > 0:
+                player.damage(random.randint(enemy.damage[0], enemy.damage[1]), False)
         if player.currentHealth <= 0:
             player.death()
             del localEnemy
@@ -620,22 +627,29 @@ class DungeonCreator(object):
                             if eligibleEnemies == []:
                                 eligibleEnemies = enemyDictionary
                             j.enemy = random.choice(eligibleEnemies)
-                        elif content == 'L':
-                            eligibleLoot = []
-                            for item in itemDictionary:
-                                if floor >= item.level[0] and floor <= item.level[1]:
-                                    eligibleLoot.append(item)
-                            if eligibleLoot == []:
-                                eligibleLoot = itemDictionary
-                            j.loot = random.choice(eligibleLoot)
+                        elif content == 'L' or content == 'T':
+                            eligibleFood = []
+                            eligibleWeapon = []
+                            foodQuality = random.choices([1,2,3,4], weights=(60, 25, 10, 5), k=1)
+                            for item in foodDictionary:
+                                if difficulty == item.level and foodQuality[0] == item.quality:
+                                    eligibleFood.append(item)
+                            if eligibleFood == []:
+                                eligibleFood == foodDictionary
+                            weaponQuality = random.choices([1,2,3,4], weights=(60, 25, 10, 5), k=1)
+                            if random.randint(1,3) == 1:
+                                for item in weaponDictionary:
+                                    if difficulty == item.level and weaponQuality[0] == item.quality:
+                                        eligibleWeapon.append(item)
+                                if eligibleWeapon == []:
+                                    eligibleWeapon = weaponDictionary
+                            if eligibleWeapon != []:
+                                j.loot = [random.choice(eligibleFood), random.choice(eligibleWeapon)]
+                            else:
+                                j.loot = [random.choice(eligibleFood)]
+
                         elif content == 'T': # since traders are not implemented yet, they are just a renamed loot chest
-                            eligibleLoot = []
-                            for item in itemDictionary:
-                                if floor >= item.level[0] and floor <= item.level[1]:
-                                    eligibleLoot.append(item)
-                            if eligibleLoot == []:
-                                eligibleLoot = itemDictionary
-                            j.loot = random.choice(eligibleLoot)
+                            pass
         return array
     def findFloorSize(self, a, d, e): #find the factors, b and c, of a, in the ratio d and e
         b = round(d*sqrt(a/(d*e)))

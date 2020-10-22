@@ -15,7 +15,7 @@ class Enemy(object):
 
 class Mutant(Enemy):
     name = 'Mutant'
-    type = 'enemy' #is that right? 
+    type = 'enemy'
     maxHealth = 100
     damage = (4,5)
     level = (1,7)

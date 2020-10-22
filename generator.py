@@ -11,7 +11,7 @@ class Room(object):
     enemy = None
     traderType = None
     explored = False
-    loot = None
+    loot = []
     def __str__(self):
         return boolToConnection(self.connections[3]) + self.content + boolToConnection(self.connections[1])
 class Generator(object):
