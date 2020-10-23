@@ -634,8 +634,7 @@ class DungeonCreator(object):
                             for item in foodDictionary:
                                 if difficulty == item.level and foodQuality[0] == item.quality:
                                     eligibleFood.append(item)
-                            if eligibleFood == []:
-                                eligibleFood == foodDictionary
+
                             weaponQuality = random.choices([1,2,3,4], weights=(60, 25, 10, 5), k=1)
                             if random.randint(1,3) == 1:
                                 for item in weaponDictionary:
@@ -645,6 +644,8 @@ class DungeonCreator(object):
                                     eligibleWeapon = weaponDictionary
                             if eligibleWeapon != []:
                                 j.loot = [random.choice(eligibleFood), random.choice(eligibleWeapon)]
+                            if eligibleFood == []:
+                                eligibleFood == foodDictionary
                             else:
                                 j.loot = [random.choice(eligibleFood)]
 
