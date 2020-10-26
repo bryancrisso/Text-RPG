@@ -5,13 +5,19 @@ from Text_RPG_Enemy import *
 
 
 
-foodDictionary = [Bread, Apple, CornishPasty, SteamedHam, Beans, Cherries, Steak, TinOfBiscuits, BleachBottle]
+foodDictionary = [Bread, Apple, CornishPasty, SteamedHam, Beans, Cherries, Steak, TinOfBiscuits, BleachBottle, CheeseSandwich, FullEnglishBreakfast, LambShank, FishAndChips, Olives, SausageRoll]
 
-weaponDictionary = [Fists, TrustyDagger, ShoddyShank, BattleAxe, Lance, Katana, Club, BroadSword, StilettoKnife]
+weaponDictionary = [Fists, TrustyDagger, ShoddyShank, BattleAxe, Lance, Katana, Club, BroadSword, StilettoKnife, SteelAxe, SilverSabre, MagnesiumKnife, AluminiumMallet, IronCutlass, RubySpear, ThrowingKnife]
 
-enemyDictionary = [Mutant, Brute, Skeleton, KnifeGoblin, Ghoul, MutantGuard, ThiccArab]
+enemyDictionary = [Mutant, Brute, Skeleton, KnifeGoblin, Ghoul, MutantGuard, ThiccArab, DarkKnight, Drunk, Knight, Giant, Looter, Samurai, Goblin, PoisonousSpider, Hound, WildBoar, Hunter, MutantWarrior]
 
 itemDictionary = foodDictionary + weaponDictionary
+
+grocerBaseItems = [Bread, CheeseSandwich]
+
+blacksmithBaseItems = [TrustyDagger, BroadSword]
+
+foodBlacklist = [Cherries, Beans]
 
 if __name__ == "__main__":
     print("This is a module that creates item dictionaries for the game.")

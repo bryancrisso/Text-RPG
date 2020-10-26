@@ -69,6 +69,27 @@ class Cherries(Food):
 #LEVEL 2 ITEMS#
 ###############
 
+class SausageRoll(Food):
+    name = 'Sausage Roll'
+    healthRegen = 30
+    cost = 40
+    level = 2
+    quality = 2
+
+class LambShank(Food):
+    name = 'Lamb Shank'
+    healthRegen = 50
+    cost = 60
+    level = 2
+    quality = 3
+
+class FishAndChips(Food):
+    name = 'Fish and Chips'
+    healthRegen = 40
+    cost = 50
+    level = 2
+    quality = 3
+
 class Steak(Food):
     name = 'Steak'
     healthRegen = 70
@@ -79,7 +100,14 @@ class Steak(Food):
 class TinOfBiscuits(Food):
     name = 'Tin of Biscuits'
     healthRegen = 9
-    cost = 15
+    cost = 12
+    level = 2
+    quality = 1
+
+class Olives(Food):
+    name = 'Olives'
+    healthRegen = 6
+    cost = 10
     level = 2
     quality = 1
 
@@ -90,6 +118,20 @@ class BleachBottle(Food):
     level = 2
     quality = 2
     #Put effect of removing posion and whatnot
+
+class CheeseSandwich(Food):
+    name = 'Cheese Sandwich'
+    healthRegen = 20
+    cost = 25
+    level = 2
+    quality = 2
+
+class FullEnglishBreakfast(Food):
+    name = 'Full English Breakfast'
+    healthRegen = 95
+    cost = 100
+    level = 2
+    quality = 4
 
 #make food better value if you pay more
 if __name__ == "__main__":
