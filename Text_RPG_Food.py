@@ -55,8 +55,8 @@ class Beans(Food):
 
 #class BatStew(Food):
     #name = 'Bat Stew'
-    #healthRegen = 20 ! CHANCE OF DAMAGING PLAYER?
-    #cost = 10        ! dk how to impliment
+    #healthRegen = 20 ! CHANCE OF DAMAGING PLAYER
+    #cost = 10
 
 class Cherries(Food):
     name = 'Cherries'
@@ -132,6 +132,12 @@ class FullEnglishBreakfast(Food):
     cost = 100
     level = 2
     quality = 4
+
+###############
+#LEVEL 3 ITEMS#
+###############
+
+
 
 #make food better value if you pay more
 if __name__ == "__main__":

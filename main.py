@@ -348,6 +348,7 @@ _____.___.              ________  .__           .___
         self.inventory = self.loadInventory()
         self.loadStats()
         self.playerLocation = [0,0]
+        self.gold = self.gold//2
         
 
     def __init__(self, newGame):
@@ -517,8 +518,9 @@ ___________              __ ____________________  ________
         room = floor[player.playerLocation[1]][player.playerLocation[0]]
         if not room.explored:
             if room.content == 'F':
-                self.battle(player, room.enemy) #make it if escaped, room is still unexplored
-                room.explored = True
+                escape = self.battle(player, room.enemy) #make it if escaped, room is still unexplored
+                if escape != 1:
+                    room.explored = True
             elif room.content == 'L':
                 print("You found a loot chest!")
                 print("You open the loot chest...")
@@ -574,7 +576,7 @@ ___________              __ ____________________  ________
                         player.attack(enemy)
                         hasAttacked = True
                     elif choice == '2':
-                        return random.randint(1, 2)
+                        return random.randint(1, 4)
                         hasAttacked = True
                     elif choice == '3':
                         player.eat()
@@ -593,7 +595,7 @@ ___________              __ ____________________  ________
             if escape == 1:
                 print("You escaped!")
                 break
-            elif escape == 2:
+            else:
                 print("You failed to escape!")
             if localEnemy.currentHealth > 0:
                 player.damage(random.randint(enemy.damage[0], enemy.damage[1]), False)
@@ -607,6 +609,7 @@ ___________              __ ____________________  ________
             player.gold += gold
             del localEnemy
             player.displayStats()
+        return escape
 
     def __init__(self):
         self.mainMenu()

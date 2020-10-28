@@ -7,9 +7,9 @@ from Text_RPG_Enemy import *
 
 foodDictionary = [Bread, Apple, CornishPasty, SteamedHam, Beans, Cherries, Steak, TinOfBiscuits, BleachBottle, CheeseSandwich, FullEnglishBreakfast, LambShank, FishAndChips, Olives, SausageRoll]
 
-weaponDictionary = [Fists, TrustyDagger, ShoddyShank, BattleAxe, Lance, Katana, Club, BroadSword, StilettoKnife, SteelAxe, SilverSabre, MagnesiumKnife, AluminiumMallet, IronCutlass, RubySpear, ThrowingKnife]
+weaponDictionary = [Fists, TrustyDagger, ShoddyShank, BattleAxe, Lance, Katana, Club, BroadSword, StilettoKnife, SteelAxe, SilverSabre, MagnesiumKnife, AluminiumMallet, IronCutlass, RubySpear, ThrowingKnife, TitaniumAxe, Mace]
 
-enemyDictionary = [Mutant, Brute, Skeleton, KnifeGoblin, Ghoul, MutantGuard, ThiccArab, DarkKnight, Drunk, Knight, Giant, Looter, Samurai, Goblin, PoisonousSpider, Hound, WildBoar, Hunter, MutantWarrior]
+enemyDictionary = [Mutant, Brute, Skeleton, KnifeGoblin, Ghoul, MutantGuard, ThiccArab, DarkKnight, Drunk, Knight, Giant, Looter, Samurai, Goblin, PoisonousSpider, Hound, WildBoar, Hunter, MutantWarrior, HostileTrader, BruteGuard, Primitive, PrimitiveLeader, PrimitiveSlave, PrimitiveGuard]
 
 itemDictionary = foodDictionary + weaponDictionary
 

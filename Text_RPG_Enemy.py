@@ -19,7 +19,7 @@ class Mutant(Enemy):
     type = 'enemy'
     maxHealth = 100
     damage = (4,5)
-    level = (1,4)
+    level = (1,6)
     gold = (10,30)
 class Brute(Enemy):
     name = 'Brute'
@@ -40,7 +40,7 @@ class KnifeGoblin(Enemy):
     type = 'enemy'
     maxHealth = 70
     damage = (12,18)
-    level = (4,15)
+    level = (6,15)
     gold = (20,60)
 class Ghoul(Enemy):
     name = 'Ghoul'
@@ -56,13 +56,20 @@ class MutantGuard(Enemy):
     damage = (9,12)
     level = (5,15)
     gold = (40,70)
+class BruteGuard(Enemy):
+    name = 'Brute Guard'
+    type = 'enemy'
+    maxHealth = 150
+    damage = (11,15)
+    level = (7,20)
+    gold = (50,90)
 class MutantWarrior(Enemy):
     name = 'Mutant Warrior'
     type = 'enemy'
-    maxHealth = 175
-    damage = (16,27)
-    level = (12,34)
-    gold = (70,90)
+    maxHealth = 180
+    damage = (14,18)
+    level = (10,34)
+    gold = (60,100)
 class ThiccArab(Enemy):
     name = 'Thicc Arab'
     type = 'enemy'  
@@ -90,7 +97,7 @@ class Knight(Enemy):
     maxHealth = 125
     damage = (12,18)
     level = (8,20)
-    gold = (50,100)
+    gold = (70,100)
 class Giant(Enemy):
     name = 'Giant'
     type = 'enemy'
@@ -124,7 +131,7 @@ class PoisonousSpider(Enemy): #make poisonous
     type = 'enemy'
     maxHealth = 20
     damage = (3,4)
-    level = (0,40)
+    level = (1,40)
     gold = (0,0)         #no gold as animals dont carry gold
 class Hound(Enemy): 
     name = 'Hound'
@@ -147,3 +154,38 @@ class Hunter(Enemy):
     damage = (35,40)
     level = (17,35)
     gold = (90,120)
+class HostileTrader(Enemy): 
+    name = 'Hostile Trader'
+    type = 'enemy'
+    maxHealth = 250
+    damage = (40,60)
+    level = (20,45)
+    gold = (140,230) 
+class Primitive(Enemy): 
+    name = 'Primitive'
+    type = 'enemy'
+    maxHealth = 100
+    damage = (7,9)
+    level = (1,6)
+    gold = (15,45)
+class PrimitiveLeader(Enemy): 
+    name = 'Primitive Leader'
+    type = 'enemy'
+    maxHealth = 115
+    damage = (11,13)
+    level = (2,6)
+    gold = (25,50)
+class PrimitiveSlave(Enemy): 
+    name = 'Primitive Slave'
+    type = 'enemy'
+    maxHealth = 90
+    damage = (4,5)
+    level = (1,6)
+    gold = (10,15)
+class PrimitiveGuard(Enemy): 
+    name = 'Primitive Guard'
+    type = 'enemy'
+    maxHealth = 125
+    damage = (12,15)
+    level = (2,6)
+    gold = (15,45)

@@ -53,7 +53,7 @@ class Club(Weapon):
     quality = 1
 class Lance(Weapon):
     name = 'Lance'
-    damage = (10,35)
+    damage = (10,30)
     durabilityDecrease = 3
     cost = 175
     level = 1
@@ -68,7 +68,7 @@ class Katana(Weapon):
 class AluminiumMallet(Weapon):
     name = 'Aluminium Mallet'
     damage = (30,40)
-    durabilityDecrease = 8
+    durabilityDecrease = 6
     cost = 250
     level = 1
     quality = 3
@@ -86,6 +86,14 @@ class RubySpear(Weapon):
     cost = 400
     level = 1
     quality = 4
+class Mace(Weapon):
+    name = 'Mace'
+    damage = (25,45)
+    durabilityDecrease = 4
+    cost = 250
+    level = 1
+    quality = 3
+
 
 ###############
 #LEVEL 2 ITEMS#
@@ -100,14 +108,14 @@ class MagnesiumKnife(Weapon):
     quality = 2
 class BroadSword(Weapon):
     name = 'Broadsword'
-    damage = (15,25)
-    durabilityDecrease = 2
+    damage = (17,26)
+    durabilityDecrease = 3
     cost = 150
     level = 2
     quality = 2
 class StilettoKnife(Weapon):
     name = 'Stiletto Knife'
-    damage = (14,18)
+    damage = (10,16)
     durabilityDecrease = 4
     cost = 75
     level = 2
@@ -123,7 +131,7 @@ class SilverSabre(Weapon):
     name = 'Silver Sabre'
     damage = (40,60)
     durabilityDecrease = 2
-    cost = 400
+    cost = 450
     level = 2
     quality = 4
 class ThrowingKnife(Weapon): #basicaly a single use knife
@@ -133,6 +141,17 @@ class ThrowingKnife(Weapon): #basicaly a single use knife
     cost = 40               # 'throw it'
     level = 2
     quality = 1
+class TitaniumAxe(Weapon):
+    name = 'Titanium Axe'
+    damage = (60,70)
+    durabilityDecrease = 3
+    cost = 700
+    level = 2
+    quality = 4
+
+###############
+#LEVEL 3 ITEMS#
+###############
 
 if __name__ == "__main__":
     print("This is a module that contains weapon data for the game.")
