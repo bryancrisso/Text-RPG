@@ -2,6 +2,7 @@ import random, pickle, os, colorama
 from Text_RPG_Food import *
 from dictionaries import *
 from Text_RPG_Enemy import *
+from Text_RPG_Armour import *
 from colorama import Back, Fore, Style
 import generator
 from math import sqrt
@@ -17,6 +18,7 @@ p = open('stats.dat', 'ab')
 p.close()
 del p
 
+
 def askYN(question):
     response = None
     while response not in ('y', 'n'):
@@ -24,19 +26,21 @@ def askYN(question):
     return response
 
 
-defaultItems = (TrustyDagger, Bread, Bread, Bread, Bread, Bread, Fists)
-cDict = {'green':Fore.GREEN,
-            'cyan':Fore.CYAN,
-            'red':Fore.RED,
-            'blue':Fore.BLUE,
-            'magenta':Fore.MAGENTA,
-            'yellow':Fore.YELLOW,
-            'reset':Style.RESET_ALL,
-            'bright':Style.BRIGHT,
-            'bRed':Back.RED,
-            'black':Fore.BLACK,
-            'bGreen':Back.GREEN}
-
+defaultItems = (TrustyDagger, Bread, Bread, Bread, Bread, Bread, Fists,
+                ClothArmour)
+cDict = {
+    'green': Fore.GREEN,
+    'cyan': Fore.CYAN,
+    'red': Fore.RED,
+    'blue': Fore.BLUE,
+    'magenta': Fore.MAGENTA,
+    'yellow': Fore.YELLOW,
+    'reset': Style.RESET_ALL,
+    'bright': Style.BRIGHT,
+    'bRed': Back.RED,
+    'black': Fore.BLACK,
+    'bGreen': Back.GREEN
+}
 """ To do list
 Items needed:
 1: Health O
@@ -53,7 +57,7 @@ Items needed:
 12: inventory displayer O
 13: add __str__ function not needed currently
 14: Save and load stats O
-15: Create the GAME and GAMEPLAY X
+15: Create the GAME and GAMEPLAY O
 16: bug: stackable item number is deleted between saves (fixed)
 17: implement escape failed message (done)
 """
@@ -67,6 +71,8 @@ class Player(object):
 
     currentWeapon = None
 
+    currentArmour = None
+
     inventory = []
     stackInventory = {}  #data for storing stackable item amounts
 
@@ -77,7 +83,7 @@ class Player(object):
     currentFloor = 1
     floorList = []
 
-    playerLocation = [0,0]
+    playerLocation = [0, 0]
 
     def displayInventory(self, inventoryList=inventory):  #function for displaying the inventory
         print(cDict['reset'], end='')
@@ -115,7 +121,8 @@ class Player(object):
         except:
             print('Something went wrong while adding to the inventory!')
 
-    def inventoryRemove(self, itemNum):  #delete an item from the player's inventory
+    def inventoryRemove(self,
+                        itemNum):  #delete an item from the player's inventory
         if self.inventory[itemNum].isStackable:
             self.stackInventory[self.inventory[itemNum]] -= 1
             if self.stackInventory[self.inventory[itemNum]] <= 0:
@@ -123,7 +130,9 @@ class Player(object):
         else:
             self.inventory.remove(self.inventory[itemNum])
 
-    def saveInventory(self, inventoryList):  #Save the inventory to the inventory.dat file
+    def saveInventory(
+            self,
+            inventoryList):  #Save the inventory to the inventory.dat file
         print('Saving Inventory...')
         pfile = open('inventory.dat', 'wb')
         pickle.dump(inventoryList, pfile)
@@ -167,7 +176,8 @@ class Player(object):
             print('Hmm... Something\'s wrong with the file time.txt')
         del file
 
-    def setInventory(self, invList, firstVar, defaultItems):  #load in player inventory
+    def setInventory(self, invList, firstVar,
+                     defaultItems):  #load in player inventory
         if firstVar == True:
             print('Loading inventory with default starting items')
             for item in defaultItems:
@@ -186,6 +196,7 @@ class Player(object):
         self.currentWeapon = self.inventory[pickle.load(pfile)]
         self.currentFloor = pickle.load(pfile)
         self.floorList = pickle.load(pfile)
+        self.currentArmour = self.inventory[pickle.load(pfile)]
         pfile.close()
         print('Stats Loaded\n' + cDict['reset'])
         del pfile
@@ -200,6 +211,7 @@ class Player(object):
         pickle.dump(self.inventory.index(self.currentWeapon), pfile)
         pickle.dump(self.currentFloor, pfile)
         pickle.dump(self.floorList, pfile)
+        pickle.dump(self.inventory.index(self.currentArmour), pfile)
         pfile.close()
         print('Stats Saved\n')
         del pfile
@@ -210,6 +222,7 @@ class Player(object):
             self.currentHealth = self.maxHealth
             self.gold = 75
             self.selectWeapon()
+            self.selectArmour()
             self.floorList.append(dungeon.createFloor(self.currentFloor))
             self.saveStats()
         else:
@@ -218,7 +231,7 @@ class Player(object):
     def setName(self):  #set the player name
         name = ''
         while name == '':
-            name = input('What do you want to call yourself?  [')
+            name = input('What do you want to call yourself? ')
         self.playerName = name
 
     def displayStats(self):  #Display player stats
@@ -226,8 +239,9 @@ class Player(object):
         print(self.playerName + '\'s stats: ')
         print(f'Health: {str(self.currentHealth)}/{str(self.maxHealth)}')
         print('Gold: ' + str(self.gold))
-        print('Weapon in use is ', end='')
-        print(self.currentWeapon.name)
+        print('Weapon in use is ' + self.currentWeapon.name)
+        print('Armour in use is ' + self.currentArmour.name)
+        print()
         print('Current Floor is: ' + str(self.currentFloor))
         print()
         self.displayInventory(self.inventory)
@@ -237,7 +251,8 @@ class Player(object):
         if self.currentHealth >= self.maxHealth:
             print("Your health is full! You can't eat anything!")
             return 0
-        print("Your current health is: " + str(self.currentHealth) + '/' + str(self.maxHealth))
+        print("Your current health is: " + str(self.currentHealth) + '/' +
+              str(self.maxHealth))
         print('What to eat?')
         self.displayInventory(self.inventory)
         while True:
@@ -270,7 +285,8 @@ class Player(object):
                 break
         if not selected:
             print('The item you chose does not exist, or is not a food item')
-        input(cDict['bGreen'] + cDict['black'] + cDict['bright'] + 'Press Enter To Continue' + cDict['reset'])
+        input(cDict['bGreen'] + cDict['black'] + cDict['bright'] +
+              'Press Enter To Continue' + cDict['reset'])
         os.system('cls||clear')
 
     def selectWeapon(self):  #select player weapon for fighting
@@ -302,7 +318,41 @@ class Player(object):
                     self.currentWeapon = i
                     break
             #self.saveStats()
-        input(cDict['bGreen'] + cDict['black'] + cDict['bright'] + 'Press Enter To Continue' + cDict['reset'])
+        input(cDict['bGreen'] + cDict['black'] + cDict['bright'] +
+              'Press Enter To Continue' + cDict['reset'])
+        os.system('cls||clear')
+
+    def selectArmour(self):  #select player armour for defense
+        selected = False
+        print('What armour to use?')
+        self.displayInventory(self.inventory)
+        while True:
+            try:
+                choice = int(input('Choice  ['))
+                choice = self.inventory[choice - 1]
+                break
+            except:
+                print("Invalid number!")
+        for i in armourDictionary:
+            if choice.name == i.name:
+                print('The item you chose exists as a weapon!')
+                print(choice)
+                print('Your choice exists in your inventory!')
+                print('Equipping ' + choice.name + '\n')
+                self.currentArmour = choice
+                #self.saveStats()
+                selected = True
+                break
+        if not selected:
+            print('The item you chose does not exist, or is not a weapon')
+            print('Defaulting to cloth clothes')
+            for i in self.inventory:
+                if i.name == "Cloth Clothes":
+                    self.currentArmour = i
+                    break
+            #self.saveStats()
+        input(cDict['bGreen'] + cDict['black'] + cDict['bright'] +
+              'Press Enter To Continue' + cDict['reset'])
         os.system('cls||clear')
 
     def weaponDurabilityDecrease(self):  #cause damage to the weapon durability
@@ -314,17 +364,32 @@ class Player(object):
             self.currentWeapon.durability = 100
             self.selectWeapon()
             #self.saveInventory(self.inventory)
+    def armourDurabilityDecrease(self):
+        self.currentArmour.durability -= self.currentArmour.durabilityDecrease
+        if self.currentArmour.durability <= 0:
+            print('Your ' + self.currentArmour.name + ' broke!')
+            print('You must now equip some new armour')
+            self.inventoryRemove(self.inventory.index(self.currentArmour))
+            self.currentArmour.durability = 100
+            self.selectArmour()
 
     def attack(self, enemy):
-        damage = random.randint(self.currentWeapon.damage[0],self.currentWeapon.damage[1])
+        damage = random.randint(self.currentWeapon.damage[0],
+                                self.currentWeapon.damage[1])
         enemy.currentHealth -= damage
         self.weaponDurabilityDecrease()
         print(cDict['magenta'], end='')
         print(f"You dealt {str(damage)} to {enemy.name}!")
-        print(f"{enemy.name} has {str(enemy.currentHealth)} health left." + cDict['reset'])
+        print(f"{enemy.name} has {str(enemy.currentHealth)} health left." +
+              cDict['reset'])
 
     def damage(self, damage, checkForDeath=True):
-        self.currentHealth -= damage
+        if damage > self.currentArmour.maxProtection:
+            self.currentHealth -= damage
+        else:
+            self.currentHealth -= round(damage * 1 -
+                                        (self.currentArmour.defense / 10))
+            self.armourDurabilityDecrease()
         print(cDict['red'], end='')
         print("\nYou took " + str(damage) + " damage!")
         print("You now have " + str(self.currentHealth) + " Health\n")
@@ -347,9 +412,23 @@ _____.___.              ________  .__           .___
         print(cDict['reset'], end='')
         self.inventory = self.loadInventory()
         self.loadStats()
-        self.playerLocation = [0,0]
-        self.gold = self.gold//2
-        
+        self.playerLocation = [0, 0]
+        self.gold = self.gold // 2
+
+    def sortInventory(self, choice):
+        if choice == 1:  #default sorting
+
+            def myFunc(e):
+                return e.quality
+
+            self.inventory.sort(
+                key=myFunc, reverse=True)  #sorts by quality descending
+
+            def myFunc(e):
+                return e.type
+
+            self.inventory.sort(
+                key=myFunc, reverse=True)  #sorts by type descending
 
     def __init__(self, newGame):
         firstTime = self.firstTimeManager()
@@ -375,7 +454,8 @@ ___________              __ ____________________  ________
   |    |_/ __ \\  \/  /\   __\       _/|     ___/   \  ___ 
   |    |\  ___/ >    <  |  | |    |   \|    |   \    \_\  \
   |____| \___  >__/\_ \ |__| |____|_  /|____|    \______  /
-             \/      \/             \/                  \/  A Game By Slim Squad''')
+             \/      \/             \/                  \/  A Game By Slim Squad'''
+              )
         print(cDict['green'], end='')
         print('''
         1-Create new game
@@ -394,7 +474,8 @@ ___________              __ ____________________  ________
             os.system('cls||clear')
             player = Player(True)
             self.intro(player)
-            input(cDict['bGreen'] + cDict['black'] + cDict['bright'] + 'Press Enter To Continue' + cDict['reset'])
+            input(cDict['bGreen'] + cDict['black'] + cDict['bright'] +
+                  'Press Enter To Continue' + cDict['reset'])
             os.system('cls||clear')
         elif choice == 2:
             #try:
@@ -403,9 +484,11 @@ ___________              __ ____________________  ________
             self.pause(player)
             #except:
             #    print('There was an error! Maybe there isn\'t a saved game?')
-        
+
     def intro(self, player):
-        print("You are exploring a dark dungeon that contains many wild and unknown species of animals.\nApparently there are also some dangerous mutants...")
+        print(
+            "You are exploring a dark dungeon that contains many wild and unknown species of animals.\nApparently there are also some dangerous mutants..."
+        )
         print("How many floors can you explore before you die...")
         print("GOOD LUCK!")
         print()
@@ -414,21 +497,23 @@ ___________              __ ____________________  ________
     def pause(self, player):
         print("Hey, have a break!")
         while True:
-            floor = player.floorList[player.currentFloor-1]
+            floor = player.floorList[player.currentFloor - 1]
             room = floor[player.playerLocation[1]][player.playerLocation[0]]
             print("What do you want to do?")
             print(cDict['green'], end='')
             #eat, select weapon, save game, continue, and trade if available
-            choices = ['1', '2', '3', '4', '5']
+            choices = ['1', '2', '3', '4', '5', '6', '7']
             print("""
         1 - Eat
         2 - Select Weapon
         3 - View Stats and Inventory
         4 - Save Game
-        5 - Continue""")
+        5 - Continue
+        6 - Sort Inventory
+        7 - Equip Armour""")
             if room.content == 'T':
-                print("        6 - Talk to the Trader\n")
-                choices.append('6')
+                print("        8 - Talk to the Trader\n")
+                choices.append('8')
             else:
                 print()
             print(cDict['reset'], end='')
@@ -447,24 +532,36 @@ ___________              __ ____________________  ________
                 elif choice == '5':
                     self.floorMovement(player)
                 elif choice == '6':
+                    print("Sorting Inventory")
+                    player.sortInventory(1)
+                    print("Inventory Sorted")
+                elif choice == '7':
+                    player.selectArmour()
+                elif choice == '8':
                     room.trader.traderInteraction(player)
             else:
                 print("Invalid number!")
 
     def floorMovement(self, player):
         choice = []
-        floor = player.floorList[player.currentFloor-1]
+        floor = player.floorList[player.currentFloor - 1]
         generator.generator.displayMap(floor, player.playerLocation)
-        directions = ['n','e','s','w', 'u', 'd']
-        DIRECTIONS = ['n','e','s','w', 'u', 'd']
+        directions = ['n', 'e', 's', 'w', 'u', 'd']
+        DIRECTIONS = ['n', 'e', 's', 'w', 'u', 'd']
         print(f'Current Player Location: {player.playerLocation}')
-        print(f'Content of Current Location is {floor[player.playerLocation[1]][player.playerLocation[0]].content}')
+        print(
+            f'Content of Current Location is {floor[player.playerLocation[1]][player.playerLocation[0]].content}'
+        )
         for i in range(4):
-            if floor[player.playerLocation[1]][player.playerLocation[0]].connections[i] == False: #since floor coords are (y,x) and player coords are (x,y), we flip them around
+            if floor[player.playerLocation[1]][
+                    player.playerLocation[0]].connections[
+                        i] == False:  #since floor coords are (y,x) and player coords are (x,y), we flip them around
                 directions.remove(DIRECTIONS[i])
-        if floor[player.playerLocation[1]][player.playerLocation[0]].content != 'D':
+        if floor[player.playerLocation[1]][player.
+                                           playerLocation[0]].content != 'D':
             directions.remove('d')
-        if floor[player.playerLocation[1]][player.playerLocation[0]].content != 'U' or player.currentFloor == 1:
+        if floor[player.playerLocation[1]][player.playerLocation[
+                0]].content != 'U' or player.currentFloor == 1:
             directions.remove('u')
         while choice not in directions:
             print("Which way would you like to go?")
@@ -482,23 +579,24 @@ ___________              __ ____________________  ________
                 print("D - Go down the staircase")
             choice = input("Which direction to go? ").lower()
         if choice == 'n':
-            player.playerLocation[1] -= 1 #decrease y coord
+            player.playerLocation[1] -= 1  #decrease y coord
         elif choice == 'e':
-            player.playerLocation[0] += 1 #increase x coord
+            player.playerLocation[0] += 1  #increase x coord
         elif choice == 's':
-            player.playerLocation[1] += 1 #increase y coord
+            player.playerLocation[1] += 1  #increase y coord
         elif choice == 'w':
-            player.playerLocation[0] -= 1 #decrease x coord
+            player.playerLocation[0] -= 1  #decrease x coord
         elif choice == 'u':
-            player.playerLocation = [0,0]
+            player.playerLocation = [0, 0]
             player.currentFloor -= 1
             print("You went back one floor")
             print("Your current floor is now " + str(player.currentFloor))
         elif choice == 'd':
-            player.playerLocation = [0,0]
+            player.playerLocation = [0, 0]
             if player.currentFloor == len(player.floorList):
                 player.currentFloor += 1
-                player.floorList.append(dungeon.createFloor(player.currentFloor))
+                player.floorList.append(
+                    dungeon.createFloor(player.currentFloor))
             else:
                 player.currentFloor += 1
             print("You went down one floor")
@@ -506,19 +604,24 @@ ___________              __ ____________________  ________
             player.saveStats()
             player.saveInventory(player.inventory)
         print(f'New Player Location: {player.playerLocation}')
-        print(f'Content of New Location is {floor[player.playerLocation[1]][player.playerLocation[0]].content}')
-        input(cDict['bGreen'] + cDict['black'] + cDict['bright'] + 'Press Enter To Continue' + cDict['reset'])
+        print(
+            f'Content of New Location is {floor[player.playerLocation[1]][player.playerLocation[0]].content}'
+        )
+        input(cDict['bGreen'] + cDict['black'] + cDict['bright'] +
+              'Press Enter To Continue' + cDict['reset'])
         os.system('cls||clear')
-        self.floorInteraction(floor[player.playerLocation[1]][player.playerLocation[0]], player)
+        self.floorInteraction(
+            floor[player.playerLocation[1]][player.playerLocation[0]], player)
 
-    
     def floorInteraction(self, room, player):
         print("You enter the room...")
-        floor = player.floorList[player.currentFloor-1]
+        floor = player.floorList[player.currentFloor - 1]
         room = floor[player.playerLocation[1]][player.playerLocation[0]]
         if not room.explored:
             if room.content == 'F':
-                escape = self.battle(player, room.enemy) #make it if escaped, room is still unexplored
+                escape = self.battle(
+                    player,
+                    room.enemy)  #make it if escaped, room is still unexplored
                 if escape != 1:
                     room.explored = True
             elif room.content == 'L':
@@ -551,12 +654,12 @@ ___________              __ ____________________  ________
                 print("You find a staircase going downwards.")
             else:
                 print("It's just an empty room.")
-        
 
     def encounter(self, player, enemy):
+        eatCount = 0
         hasAttacked = False
         choice = ""
-        choices = ['1', '2', '3', '4', '5']
+        choices = ['1', '2', '3', '4', '5', '6', '7']
         while not hasAttacked:
             print(enemy)
             print("What do you do?")
@@ -566,6 +669,8 @@ ___________              __ ____________________  ________
         3 - Eat
         4 - Select Weapon
         5 - View Stats and Inventory
+        6 - Sort Inventory
+        7 - Equip armour
             """ + cDict['reset'])
             choice = ""
             while choice not in choices:
@@ -576,14 +681,24 @@ ___________              __ ____________________  ________
                         player.attack(enemy)
                         hasAttacked = True
                     elif choice == '2':
-                        return random.randint(1, 4)
+                        return random.randint(1, 3)
                         hasAttacked = True
                     elif choice == '3':
-                        player.eat()
+                        if eatCount <= 5:
+                            player.eat()
+                            eatCount += 1
+                        else:
+                            print("You are full! You can't eat!")
                     elif choice == '4':
                         player.selectWeapon()
                     elif choice == '5':
                         player.displayStats()
+                    elif choice == '6':
+                        print("Sorting Inventory")
+                        player.sortInventory(1)
+                        print("Inventory Sorted")
+                    elif choice == '7':
+                        player.selectArmour()
                 else:
                     print("Invalid number!")
 
@@ -595,16 +710,17 @@ ___________              __ ____________________  ________
             if escape == 1:
                 print("You escaped!")
                 break
-            else:
+            elif escape in [2, 3]:
                 print("You failed to escape!")
             if localEnemy.currentHealth > 0:
-                player.damage(random.randint(enemy.damage[0], enemy.damage[1]), False)
+                player.damage(
+                    random.randint(enemy.damage[0], enemy.damage[1]), False)
         if player.currentHealth <= 0:
             player.death()
             del localEnemy
         elif localEnemy.currentHealth <= 0:
             print(f"You defeated the {localEnemy.name}\n")
-            gold = random.randint(localEnemy.gold[0],localEnemy.gold[1])
+            gold = random.randint(localEnemy.gold[0], localEnemy.gold[1])
             print("You received " + str(gold) + " Gold")
             player.gold += gold
             del localEnemy
@@ -613,31 +729,37 @@ ___________              __ ____________________  ________
 
     def __init__(self):
         self.mainMenu()
+
+
 class DungeonCreator(object):
-    TYPES = {'U' : 1, #stairs up
-            'D' : 1, #stairs down
-            'F' : 6, #fight
-            'L' : 3, #loot
-            'T' : 1} #trader
-    def createFloor(self, floor = 1):
-        difficulty = floor//10 + 1
+    TYPES = {
+        'U': 1,  #stairs up
+        'D': 1,  #stairs down
+        'F': 6,  #fight
+        'L': 3,  #loot
+        'T': 1
+    }  #trader
+
+    def createFloor(self, floor=1):
+        difficulty = floor // 10 + 1
         baseRooms = 10
         extraRooms = 2
         currentRooms = baseRooms * difficulty + extraRooms
         ratio = (4, 3)
-        currentRatio = self.findFloorSize(currentRooms*2, ratio[0], ratio[1])
+        currentRatio = self.findFloorSize(currentRooms * 2, ratio[0], ratio[1])
         #print(currentRatio)
 
         floorArray = generator.generator.generate(currentRatio, currentRooms)
         floorArray = generator.generator.createConnections(floorArray)
         floorArray = self.populateFloor(floorArray, floor)
         return floorArray
-    def populateFloor(self, array, floor = 1):
-        difficulty = floor//10 + 1
+
+    def populateFloor(self, array, floor=1):
+        difficulty = floor // 10 + 1
         types = dict(self.TYPES)
         for key in types.keys():
             if key != 'U' and key != 'D':
-                types[key] = types[key]*difficulty
+                types[key] = types[key] * difficulty
         for i in array:
             for j in i:
                 if array.index(i) == 0 and i.index(j) == 0:
@@ -654,7 +776,8 @@ class DungeonCreator(object):
                         if content == 'F':
                             eligibleEnemies = []
                             for enemy in enemyDictionary:
-                                if floor >= enemy.level[0] and floor <= enemy.level[1]:
+                                if floor >= enemy.level[
+                                        0] and floor <= enemy.level[1]:
                                     eligibleEnemies.append(enemy)
                             if eligibleEnemies == []:
                                 eligibleEnemies = enemyDictionary
@@ -662,33 +785,51 @@ class DungeonCreator(object):
                         elif content == 'L':
                             eligibleFood = []
                             eligibleWeapon = []
-                            foodQuality = random.choices([1,2,3,4], weights=(60, 25, 10, 5), k=1)
+                            foodQuality = random.choices([1, 2, 3, 4],
+                                                         weights=(60, 25, 10,
+                                                                  5),
+                                                         k=1)
                             for item in foodDictionary:
-                                if difficulty == item.level and foodQuality[0] == item.quality and item not in foodBlacklist:
+                                if difficulty == item.level and foodQuality[
+                                        0] == item.quality and item not in foodBlacklist:
                                     eligibleFood.append(item)
                             if eligibleFood == []:
                                 eligibleFood = foodDictionary
 
-                            weaponQuality = random.choices([1,2,3,4], weights=(60, 25, 10, 5), k=1)
-                            if random.randint(1,3) == 1:
-                                for item in weaponDictionary:
-                                    if difficulty == item.level and weaponQuality[0] == item.quality:
+                            weaponQuality = random.choices([1, 2, 3, 4],
+                                                           weights=(60, 25, 10,
+                                                                    5),
+                                                           k=1)
+                            if random.randint(1, 3) == 1:
+                                for item in weaponDictionary + armourDictionary:
+                                    if difficulty == item.level and weaponQuality[
+                                            0] == item.quality:
                                         eligibleWeapon.append(item)
                                 if eligibleWeapon == []:
-                                    eligibleWeapon = weaponDictionary[1:] #do not include fists
+                                    eligibleWeapon = weaponDictionary[
+                                        1:] + armourDictionary[
+                                            1:]  #do not include fists or cloth clothes
 
                             if eligibleWeapon != []:
-                                j.loot = [random.choice(eligibleFood), random.choice(eligibleWeapon)]
+                                j.loot = [
+                                    random.choice(eligibleFood),
+                                    random.choice(eligibleWeapon)
+                                ]
                             else:
                                 j.loot = [random.choice(eligibleFood)]
 
-                        elif content == 'T': # since traders are not implemented yet, they are just a renamed loot chest
-                            j.trader = Trader(random.choice(['grocer', 'blacksmith']), floor)
+                        elif content == 'T':
+                            j.trader = Trader(
+                                random.choice(['grocer', 'blacksmith']), floor)
         return array
-    def findFloorSize(self, a, d, e): #find the factors, b and c, of a, in the ratio d and e
-        b = round(d*sqrt(a/(d*e)))
-        c = round(e*sqrt(a/(d*e)))
+
+    def findFloorSize(
+            self, a, d,
+            e):  #find the factors, b and c, of a, in the ratio d and e
+        b = round(d * sqrt(a / (d * e)))
+        c = round(e * sqrt(a / (d * e)))
         return (b, c)
+
 
 class Trader(object):
     type = ''
@@ -696,41 +837,46 @@ class Trader(object):
     floor = 0
     baseItem = None
     difficulty = 0
+
     def createSales(self):
         if self.type == 'grocer':
             #add the base item that the trader will sell
             if self.difficulty <= len(grocerBaseItems):
-                self.baseItem = grocerBaseItems[self.difficulty-1]
+                self.baseItem = grocerBaseItems[self.difficulty - 1]
                 self.sales.append(self.baseItem)
             else:
                 self.baseItem = random.choice(grocerBaseItems)
                 self.sales.append(self.baseItem)
 
             eligibleFood = []
-            for item in foodDictionary: #add common items to list choice
+            for item in foodDictionary:  #add common items to list choice
                 if self.difficulty == item.level and item.quality == 1 and item != self.baseItem:
                     eligibleFood.append(item)
-            for i in range(2): #add 3 common items to sales
+            for i in range(2):  #add 3 common items to sales
                 if eligibleFood != []:
                     choice = random.choice(eligibleFood)
                     self.sales.append(choice)
                     eligibleFood.remove(choice)
-                else: break
+                else:
+                    break
 
             eligibleFood = []
-            for item in foodDictionary: #add rare items to list choice
+            for item in foodDictionary:  #add rare items to list choice
                 if self.difficulty == item.level and item.quality == 2 and item != self.baseItem:
                     eligibleFood.append(item)
-            for i in range(random.randint(1,2)): #add 1 or 2 rare items
+            for i in range(random.randint(1, 2)):  #add 1 or 2 rare items
                 if eligibleFood != []:
                     choice = random.choice(eligibleFood)
                     self.sales.append(choice)
                     eligibleFood.remove(choice)
-                else: break
+                else:
+                    break
 
-            if random.randint(1,3) == 1: #1/3 chance for trader to sell an epic food item
+            if random.randint(
+                    1,
+                    3) == 1:  #1/3 chance for trader to sell an epic food item
                 eligibleFood = []
-                for item in foodDictionary: #add epic items to list choice
+                for item in foodDictionary:  #add epic items to list choice
                     if self.difficulty == item.level and item.quality == 3 and item != self.baseItem:
                         eligibleFood.append(item)
                 if eligibleFood != []:
@@ -738,9 +884,11 @@ class Trader(object):
                     self.sales.append(choice)
                     eligibleFood.remove(choice)
 
-            if random.randint(1,4) == 1: #1/4 chance for trader to sell an legendary food item
+            if random.randint(
+                    1, 4
+            ) == 1:  #1/4 chance for trader to sell an legendary food item
                 eligibleFood = []
-                for item in foodDictionary: #add legendary items to list choice
+                for item in foodDictionary:  #add legendary items to list choice
                     if self.difficulty == item.level and item.quality == 4 and item != self.baseItem:
                         eligibleFood.append(item)
                 if eligibleFood != []:
@@ -750,37 +898,41 @@ class Trader(object):
         if self.type == 'blacksmith':
             #add the base item that the trader will sell
             if self.difficulty <= len(blacksmithBaseItems):
-                self.baseItem = blacksmithBaseItems[self.difficulty-1]
+                self.baseItem = blacksmithBaseItems[self.difficulty - 1]
                 self.sales.append(self.baseItem)
             else:
                 self.baseItem = random.choice(blacksmithBaseItems)
                 self.sales.append(self.baseItem)
 
             eligibleWeapons = []
-            for item in weaponDictionary: #add common items to list choice
+            for item in weaponDictionary:  #add common items to list choice
                 if self.difficulty == item.level and item.quality == 1 and item != self.baseItem:
                     eligibleWeapons.append(item)
-            for i in range(2): #add 3 common items to sales
+            for i in range(2):  #add 2 common items to sales
                 if eligibleWeapons != []:
                     choice = random.choice(eligibleWeapons)
                     self.sales.append(choice)
                     eligibleWeapons.remove(choice)
-                else: break
+                else:
+                    break
 
             eligibleWeapons = []
-            for item in weaponDictionary: #add rare items to list choice
+            for item in weaponDictionary:  #add rare items to list choice
                 if self.difficulty == item.level and item.quality == 2 and item != self.baseItem:
                     eligibleWeapons.append(item)
-            for i in range(random.randint(1,2)): #add 1 or 2 rare items
+            for i in range(random.randint(1, 2)):  #add 1 or 2 rare items
                 if eligibleWeapons != []:
                     choice = random.choice(eligibleWeapons)
                     self.sales.append(choice)
                     eligibleWeapons.remove(choice)
-                else: break
+                else:
+                    break
 
-            if random.randint(1,3) == 1: #1/3 chance for trader to sell an epic food item
+            if random.randint(
+                    1,
+                    3) == 1:  #1/3 chance for trader to sell an epic food item
                 eligibleWeapons = []
-                for item in weaponDictionary: #add epic items to list choice
+                for item in weaponDictionary:  #add epic items to list choice
                     if self.difficulty == item.level and item.quality == 3 and item != self.baseItem:
                         eligibleWeapons.append(item)
                 if eligibleWeapons != []:
@@ -788,9 +940,11 @@ class Trader(object):
                     self.sales.append(choice)
                     eligibleWeapons.remove(choice)
 
-            if random.randint(1,4) == 1: #1/4 chance for trader to sell an legendary food item
+            if random.randint(
+                    1, 4
+            ) == 1:  #1/4 chance for trader to sell an legendary food item
                 eligibleWeapons = []
-                for item in weaponDictionary: #add legendary items to list choice
+                for item in weaponDictionary:  #add legendary items to list choice
                     if self.difficulty == item.level and item.quality == 4 and item != self.baseItem:
                         eligibleWeapons.append(item)
                 if eligibleWeapons != []:
@@ -812,8 +966,31 @@ class Trader(object):
             elif item.quality == 4:
                 print(cDict['yellow'], end='')
             print(str(i) + ': ', end='')
-            if item.type == 'food': print(item.name + ': Regenerates ' + str(item.healthRegen) + ' Health | Cost: ' + str(item.cost) + ' Gold')
-            elif item.type == 'weapon': print(item.name + ': Deals ' + str(item.damage) + ' Damage | Cost: ' + str(item.cost) + ' Gold')
+            if item.type == 'food':
+                print(item.name + ': Regenerates ' + str(item.healthRegen) +
+                      ' Health | Cost: ' + str(item.cost) + ' Gold')
+            elif item.type == 'weapon':
+                print(item.name + ': Deals ' + str(item.damage) +
+                      ' Damage | Cost: ' + str(item.cost) + ' Gold')
+            i += 1
+        print(cDict['reset'], end='')
+    def displayPlayerSales(self, player):
+        print(cDict['reset'], end='')
+        i = 1
+        for item in player.inventory:
+            if item.quality == 0 or item.quality == 1:
+                print(cDict['reset'], end='')
+            elif item.quality == 2:
+                print(cDict['cyan'], end='')
+            elif item.quality == 3:
+                print(cDict['magenta'], end='')
+            elif item.quality == 4:
+                print(cDict['yellow'], end='')
+            print(str(i) + ': ', end='')
+            if item.type == 'food':
+                print(item.name + ': Regenerates ' + str(item.healthRegen) + ' Health | Sells for: ' + str(item.cost//2) + ' Gold' + ' | Amount: ' + str(player.stackInventory[item]))
+            elif item.type == 'weapon':
+                print(item.name + ': Deals ' + str(item.damage) + ' Damage | Sells for: ' + str(item.cost//2) + ' Gold')
             i += 1
         print(cDict['reset'], end='')
 
@@ -821,11 +998,16 @@ class Trader(object):
         while True:
             print("What do you want to do?")
             print(cDict['green'], end='')
-            choices = ['0', '1']
+            choices = ['0', '1', '2']
             print("\n        1 - Buy From the Trader's Stock")
+            print("        2 - Sell your items to the Trader (not quite yet)")
             if self.type == 'blacksmith':
-                choices.append('2')
-                print("        2 - Repair Your Weapon at the Blacksmith's Forge")
+                choices.append('3')
+                choices.append('4')
+                print(
+                    "        3 - Repair Your Weapon at the Blacksmith's Forge")
+                print(
+                    "        4 - Repair Your Armour at the Blacksmith's Forge")
             print()
             print(cDict['reset'], end='')
             choice = input("Choice (0 to exit): ")
@@ -839,7 +1021,7 @@ class Trader(object):
                         choice = int(input("What to buy? "))
                         if not choice == 0:
                             if not choice > len(self.sales):
-                                item = self.sales[choice-1]
+                                item = self.sales[choice - 1]
                                 if not item.cost > player.gold:
                                     player.gold -= item.cost
                                     player.inventoryAdd(item)
@@ -851,6 +1033,46 @@ class Trader(object):
                     except:
                         print("Invalid Input!")
                 elif choice == '2':
+                    print(f"You have {str(player.gold)} Gold")
+                    if self.type == "grocer":
+                        print("You can sell food items to the grocer")
+                        self.displayPlayerSales(player)
+                        try:
+                            print('0 to cancel')
+                            choice = int(input("What to sell? "))
+                            if not choice == 0:
+                                if not choice > len(player.inventory):
+                                    item = player.inventory[choice - 1]
+                                    if item.type == 'food' and not item.quality == 0:
+                                        player.gold += item.cost//2
+                                        player.inventoryRemove(player.inventory.index(item))
+                                        print('You sold: ' + item.name + ' for ' + str(item.cost//2) + ' Gold')
+                                    else:
+                                        print("You can't sell that!")
+                                else:
+                                    print("Invalid Input!")
+                        except:
+                            print("Invalid Input!")
+                    elif self.type == "blacksmith":
+                        print("You can sell weapons and armour to the blacksmith")
+                        self.displayPlayerSales(player)
+                        try:
+                            print('0 to cancel')
+                            choice = int(input("What to sell? "))
+                            if not choice == 0:
+                                if not choice > len(player.inventory):
+                                    item = player.inventory[choice - 1]
+                                    if (item.type == 'weapon' or item.type == 'armour') and not item.quality == 0:
+                                        player.gold += item.cost//2
+                                        player.inventoryRemove(player.inventory.index(item))
+                                        print('You sold: ' + item.name + ' for ' + str(item.cost//2) + ' Gold')
+                                    else:
+                                        print("You can't sell that!")
+                                else:
+                                    print("Invalid Input!")
+                        except:
+                            print("Invalid Input!")
+                elif choice == '3':
                     if player.currentWeapon.durability == 100:
                         print("Your weapon is not damaged! You cannot repair it!")
                     else:
@@ -869,6 +1091,26 @@ class Trader(object):
                                 print("Your weapon is now fully repaired!")
                             else:
                                 print("You don't have enough gold!")
+                elif choice == '4':
+                    if player.currentArmour.durability == 100:
+                        print("Your armour is not damaged! You cannot repair it!")
+                    else:
+                        print("Your currently equipped armour is: ")
+                        print(player.currentArmour)
+                        cost = 100 - player.currentArmour.durability
+                        print("It will cost " + str(cost) +
+                              " Gold to repair your armour fully")
+                        choice = askYN("Continue? [Y/N]: ")
+                        if choice == 'y':
+                            if not cost > player.gold:
+                                print('"Very well", says the Blacksmith. "Hand it over so I can fix it up"')
+                                print("You take off your armour and hand it to the Blacksmith")
+                                print("He whacks if a few times with a mallet to straighten out those annoying dents and adds reinforcements where needed. \nIt's not ideal, but it'll do.")
+                                player.gold -= cost
+                                player.currentArmour.durability = 100
+                                print("Your armour is now fully repaired!")
+                            else:
+                                print("You don't have enough gold!")
                 elif choice == '0':
                     break
             else:
@@ -878,8 +1120,9 @@ class Trader(object):
         self.sales = []
         self.type = type
         self.floor = floor
-        self.difficulty = floor//10 + 1
+        self.difficulty = floor // 10 + 1
         self.createSales()
-        
+
+
 dungeon = DungeonCreator()
 game = Game()
