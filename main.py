@@ -302,9 +302,6 @@ class Player(object):
                 print("Invalid number!")
         for i in weaponDictionary:
             if choice.name == i.name:
-                print('The item you chose exists as a weapon!')
-                print(choice)
-                print('Your choice exists in your inventory!')
                 print('Equipping ' + choice.name + '\n')
                 self.currentWeapon = choice
                 #self.saveStats()
@@ -335,16 +332,13 @@ class Player(object):
                 print("Invalid number!")
         for i in armourDictionary:
             if choice.name == i.name:
-                print('The item you chose exists as a weapon!')
-                print(choice)
-                print('Your choice exists in your inventory!')
                 print('Equipping ' + choice.name + '\n')
                 self.currentArmour = choice
                 #self.saveStats()
                 selected = True
                 break
         if not selected:
-            print('The item you chose does not exist, or is not a weapon')
+            print('The item you chose does not exist, or is not armour')
             print('Defaulting to cloth clothes')
             for i in self.inventory:
                 if i.name == "Cloth Clothes":
@@ -549,19 +543,13 @@ ___________              __ ____________________  ________
         directions = ['n', 'e', 's', 'w', 'u', 'd']
         DIRECTIONS = ['n', 'e', 's', 'w', 'u', 'd']
         print(f'Current Player Location: {player.playerLocation}')
-        print(
-            f'Content of Current Location is {floor[player.playerLocation[1]][player.playerLocation[0]].content}'
-        )
+        print(f'Content of Current Location is {floor[player.playerLocation[1]][player.playerLocation[0]].content}')
         for i in range(4):
-            if floor[player.playerLocation[1]][
-                    player.playerLocation[0]].connections[
-                        i] == False:  #since floor coords are (y,x) and player coords are (x,y), we flip them around
+            if floor[player.playerLocation[1]][player.playerLocation[0]].connections[i] == False:  #since floor coords are (y,x) and player coords are (x,y), we flip them around
                 directions.remove(DIRECTIONS[i])
-        if floor[player.playerLocation[1]][player.
-                                           playerLocation[0]].content != 'D':
+        if floor[player.playerLocation[1]][player.playerLocation[0]].content != 'D':
             directions.remove('d')
-        if floor[player.playerLocation[1]][player.playerLocation[
-                0]].content != 'U' or player.currentFloor == 1:
+        if floor[player.playerLocation[1]][player.playerLocation[0]].content != 'U' or player.currentFloor == 1:
             directions.remove('u')
         while choice not in directions:
             print("Which way would you like to go?")
@@ -604,14 +592,10 @@ ___________              __ ____________________  ________
             player.saveStats()
             player.saveInventory(player.inventory)
         print(f'New Player Location: {player.playerLocation}')
-        print(
-            f'Content of New Location is {floor[player.playerLocation[1]][player.playerLocation[0]].content}'
-        )
-        input(cDict['bGreen'] + cDict['black'] + cDict['bright'] +
-              'Press Enter To Continue' + cDict['reset'])
+        print(f'Content of New Location is {floor[player.playerLocation[1]][player.playerLocation[0]].content}')
+        input(cDict['bGreen'] + cDict['black'] + cDict['bright'] + 'Press Enter To Continue' + cDict['reset'])
         os.system('cls||clear')
-        self.floorInteraction(
-            floor[player.playerLocation[1]][player.playerLocation[0]], player)
+        self.floorInteraction(floor[player.playerLocation[1]][player.playerLocation[0]], player)
 
     def floorInteraction(self, room, player):
         print("You enter the room...")
@@ -625,8 +609,7 @@ ___________              __ ____________________  ________
                 if escape != 1:
                     room.explored = True
             elif room.content == 'L':
-                print("You found a loot chest!")
-                print("You open the loot chest...")
+                print("You found a loot chest")
                 for item in room.loot:
                     print(f"You received {item.name} from the chest")
                     player.inventoryAdd(item)
@@ -737,8 +720,7 @@ class DungeonCreator(object):
         'D': 1,  #stairs down
         'F': 6,  #fight
         'L': 3,  #loot
-        'T': 1
-    }  #trader
+        'T': 1}  #trader
 
     def createFloor(self, floor=1):
         difficulty = floor // 10 + 1
@@ -905,7 +887,7 @@ class Trader(object):
                 self.sales.append(self.baseItem)
 
             eligibleWeapons = []
-            for item in weaponDictionary:  #add common items to list choice
+            for item in (weaponDictionary + armourDictionary):  #add common items to list choice
                 if self.difficulty == item.level and item.quality == 1 and item != self.baseItem:
                     eligibleWeapons.append(item)
             for i in range(2):  #add 2 common items to sales
@@ -917,7 +899,7 @@ class Trader(object):
                     break
 
             eligibleWeapons = []
-            for item in weaponDictionary:  #add rare items to list choice
+            for item in (weaponDictionary + armourDictionary):  #add rare items to list choice
                 if self.difficulty == item.level and item.quality == 2 and item != self.baseItem:
                     eligibleWeapons.append(item)
             for i in range(random.randint(1, 2)):  #add 1 or 2 rare items
@@ -928,11 +910,9 @@ class Trader(object):
                 else:
                     break
 
-            if random.randint(
-                    1,
-                    3) == 1:  #1/3 chance for trader to sell an epic food item
+            if random.randint(1,3) == 1:  #1/3 chance for trader to sell an epic food item
                 eligibleWeapons = []
-                for item in weaponDictionary:  #add epic items to list choice
+                for item in (weaponDictionary + armourDictionary):  #add epic items to list choice
                     if self.difficulty == item.level and item.quality == 3 and item != self.baseItem:
                         eligibleWeapons.append(item)
                 if eligibleWeapons != []:
@@ -940,11 +920,9 @@ class Trader(object):
                     self.sales.append(choice)
                     eligibleWeapons.remove(choice)
 
-            if random.randint(
-                    1, 4
-            ) == 1:  #1/4 chance for trader to sell an legendary food item
+            if random.randint(1, 4) == 1:  #1/4 chance for trader to sell an legendary food item
                 eligibleWeapons = []
-                for item in weaponDictionary:  #add legendary items to list choice
+                for item in (weaponDictionary + armourDictionary):  #add legendary items to list choice
                     if self.difficulty == item.level and item.quality == 4 and item != self.baseItem:
                         eligibleWeapons.append(item)
                 if eligibleWeapons != []:
@@ -991,6 +969,8 @@ class Trader(object):
                 print(item.name + ': Regenerates ' + str(item.healthRegen) + ' Health | Sells for: ' + str(item.cost//2) + ' Gold' + ' | Amount: ' + str(player.stackInventory[item]))
             elif item.type == 'weapon':
                 print(item.name + ': Deals ' + str(item.damage) + ' Damage | Sells for: ' + str(item.cost//2) + ' Gold')
+            elif item.type == 'armour':
+                print(item.name + ': Reduces damage by ' + str(self.defense) + '% | ' + 'Maximum protection is ' + str(self.maxProtection) + ' Damage | Sells for: ' + str(item.cost//2) + ' Gold')
             i += 1
         print(cDict['reset'], end='')
 
@@ -1004,10 +984,8 @@ class Trader(object):
             if self.type == 'blacksmith':
                 choices.append('3')
                 choices.append('4')
-                print(
-                    "        3 - Repair Your Weapon at the Blacksmith's Forge")
-                print(
-                    "        4 - Repair Your Armour at the Blacksmith's Forge")
+                print("        3 - Repair Your Weapon at the Blacksmith's Forge")
+                print("        4 - Repair Your Armour at the Blacksmith's Forge")
             print()
             print(cDict['reset'], end='')
             choice = input("Choice (0 to exit): ")

@@ -116,8 +116,7 @@ class BleachBottle(Food):
     healthRegen = -10
     cost = 15
     level = 2
-    quality = 2
-    #Put effect of removing posion and whatnot
+    quality = 2 #Put effect of removing posion and whatnot
 
 class CheeseSandwich(Food):
     name = 'Cheese Sandwich'

@@ -6,7 +6,7 @@ def boolToConnection(value):
     else:
         return ' '
 class Room(object):
-    content = 'n' # what is in the room ('n' for nonexistent, 'e' for empty)
+    content = 'n' # what is in the room ('n' for null, 'e' for empty)
     connections = [False,False,False,False] # NESW connections
     enemy = None
     traderType = None
@@ -18,9 +18,7 @@ class Generator(object):
     rooms = []
     def generate(self, mapSize, roomCount):
         currentRoomCount = 0
-        array = [[Room()
-			for y in range(mapSize[0])]
-				for x in range(mapSize[1])]
+        array = [[Room() for y in range(mapSize[0])] for x in range(mapSize[1])]
         if roomCount > (mapSize[0]*mapSize[1]): #check if the amount of rooms can fit inside the floor
             print("Cannot fit the number of rooms within the floor!")
             return array

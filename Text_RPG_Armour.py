@@ -35,11 +35,11 @@ class LeatherArmour(Armour):
     cost = 100
     level = 1
     quality = 1
-class ChainArmour(Armour):
-    name = 'Chainmail Armour'
-    defense = 25
+class TinSuit(Armour):
+    name = 'Tin Suit'
+    defense = 20
     maxProtection = 20
-    durabilityDecrease = 2
+    durabilityDecrease = 1
     cost = 150
     level = 1
     quality = 2
@@ -48,24 +48,42 @@ class ChainArmour(Armour):
 #LEVEL 2 ITEMS#
 ###############
 
+class ChainArmour(Armour):
+    name = 'Chainmail Armour'
+    defense = 25
+    maxProtection = 40
+    durabilityDecrease = 2
+    cost = 300
+    level = 2
+    quality = 2
 class PlateArmour(Armour):
     name = 'Plate Armour'
-    defense = 33
+    defense = 35
     maxProtection = 40
     durabilityDecrease = 1
     cost = 250
     level = 2
-    quality = 2
-
-###############
-#LEVEL 3 ITEMS#
-###############
-
+    quality = 3
 class HeavyPlateArmour(Armour):
     name = 'Heavy Plate Armour'
     defense = 50
     maxProtection = 60
     durabilityDecrease = 0.5
     cost = 500
-    level = 3
+    level = 2
     quality = 4
+
+###############
+#LEVEL 3 ITEMS#
+###############
+
+class ReinforcedLeatherArmour(Armour):
+    name = "Reinforced Leather Armour"
+    defense = 15
+    maxProtection = 80
+    durabilityDecrease = 1
+    cost = 200
+    level = 3
+    quality = 1
+class ReinforcedChainArmour(Armour):
+    name

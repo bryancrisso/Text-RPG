@@ -10,7 +10,7 @@ weaponDictionary = [Fists, TrustyDagger, ShoddyShank, BattleAxe, Lance, Katana, 
 
 enemyDictionary = [Mutant, Brute, Skeleton, KnifeGoblin, Ghoul, MutantGuard, ThiccArab, DarkKnight, Drunk, Knight, Giant, Looter, Samurai, Goblin, PoisonousSpider, Hound, WildBoar, Hunter, MutantWarrior, HostileTrader, BruteGuard, Primitive, PrimitiveLeader, PrimitiveSlave, PrimitiveGuard]
 
-armourDictionary = [ClothArmour, LeatherArmour, ChainArmour, PlateArmour, HeavyPlateArmour]
+armourDictionary = [ClothArmour, LeatherArmour, ChainArmour, PlateArmour, HeavyPlateArmour, TinSuit]
 
 itemDictionary = foodDictionary + weaponDictionary + armourDictionary
 
