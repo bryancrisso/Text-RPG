@@ -85,5 +85,3 @@ class ReinforcedLeatherArmour(Armour):
     cost = 200
     level = 3
     quality = 1
-class ReinforcedChainArmour(Armour):
-    name

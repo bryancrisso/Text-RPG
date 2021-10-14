@@ -415,8 +415,7 @@ _____.___.              ________  .__           .___
             def myFunc(e):
                 return e.quality
 
-            self.inventory.sort(
-                key=myFunc, reverse=True)  #sorts by quality descending
+            self.inventory.sort(key=myFunc, reverse=True)  #sorts by quality descending
 
             def myFunc(e):
                 return e.type
@@ -536,7 +535,7 @@ ___________              __ ____________________  ________
             else:
                 print("Invalid number!")
 
-    def floorMovement(self, player):
+    def floorMovement(self, player): #move between floors
         choice = []
         floor = player.floorList[player.currentFloor - 1]
         generator.generator.displayMap(floor, player.playerLocation)
@@ -597,34 +596,32 @@ ___________              __ ____________________  ________
         os.system('cls||clear')
         self.floorInteraction(floor[player.playerLocation[1]][player.playerLocation[0]], player)
 
-    def floorInteraction(self, room, player):
+    def floorInteraction(self, room, player): #interact with room content 
         print("You enter the room...")
         floor = player.floorList[player.currentFloor - 1]
         room = floor[player.playerLocation[1]][player.playerLocation[0]]
-        if not room.explored:
-            if room.content == 'F':
-                escape = self.battle(
-                    player,
-                    room.enemy)  #make it if escaped, room is still unexplored
+        if not room.explored: #if room is unexplored
+            if room.content == 'F': #fight an enemy
+                escape = self.battle(player,room.enemy)  #make it if escaped, room is still unexplored
                 if escape != 1:
                     room.explored = True
-            elif room.content == 'L':
+            elif room.content == 'L': #loot a chest
                 print("You found a loot chest")
                 for item in room.loot:
                     print(f"You received {item.name} from the chest")
                     player.inventoryAdd(item)
                 room.explored = True
-            elif room.content == 'T':
+            elif room.content == 'T': #encounter a trader
                 print("You meet a trader!")
                 print(f"They are a {room.trader.type.capitalize()}")
                 room.explored = True
-            elif room.content == 'U' and player.currentFloor != 1:
+            elif room.content == 'U' and player.currentFloor != 1: #go upwards
                 print("You find a staircase going upwards.")
                 room.explored = True
-            elif room.content == 'D':
+            elif room.content == 'D': #go downwards
                 print("You find a staircase going downwards.")
                 room.explored = True
-        else:
+        else: #if room is explored
             if room.content == 'F':
                 print('A defeated enemy lays on the ground.')
             elif room.content == 'L':
@@ -638,7 +635,7 @@ ___________              __ ____________________  ________
             else:
                 print("It's just an empty room.")
 
-    def encounter(self, player, enemy):
+    def encounter(self, player, enemy): #encounter with an enemy
         eatCount = 0
         hasAttacked = False
         choice = ""
@@ -685,23 +682,22 @@ ___________              __ ____________________  ________
                 else:
                     print("Invalid number!")
 
-    def battle(self, player, enemy):
-        localEnemy = enemy()
+    def battle(self, player, enemy): #battle against an enemy
+        localEnemy = enemy() #initialise enemy
         print("You face a:")
         while localEnemy.currentHealth > 0 and player.currentHealth > 0:
-            escape = self.encounter(player, localEnemy)
+            escape = self.encounter(player, localEnemy) #1/3 chance to escape
             if escape == 1:
                 print("You escaped!")
                 break
             elif escape in [2, 3]:
                 print("You failed to escape!")
             if localEnemy.currentHealth > 0:
-                player.damage(
-                    random.randint(enemy.damage[0], enemy.damage[1]), False)
-        if player.currentHealth <= 0:
+                player.damage(random.randint(enemy.damage[0], enemy.damage[1]), False) #player takes damage from enemy
+        if player.currentHealth <= 0: #player dies
             player.death()
             del localEnemy
-        elif localEnemy.currentHealth <= 0:
+        elif localEnemy.currentHealth <= 0: #enemy dies
             print(f"You defeated the {localEnemy.name}\n")
             gold = random.randint(localEnemy.gold[0], localEnemy.gold[1])
             print("You received " + str(gold) + " Gold")
@@ -722,7 +718,7 @@ class DungeonCreator(object):
         'L': 3,  #loot
         'T': 1}  #trader
 
-    def createFloor(self, floor=1):
+    def createFloor(self, floor=1): #randomly generate an empty floor then populate it
         difficulty = floor // 10 + 1
         baseRooms = 10
         extraRooms = 2
@@ -736,7 +732,7 @@ class DungeonCreator(object):
         floorArray = self.populateFloor(floorArray, floor)
         return floorArray
 
-    def populateFloor(self, array, floor=1):
+    def populateFloor(self, array, floor=1): #populate a randomly generated floor with content
         difficulty = floor // 10 + 1
         types = dict(self.TYPES)
         for key in types.keys():
@@ -970,7 +966,7 @@ class Trader(object):
             elif item.type == 'weapon':
                 print(item.name + ': Deals ' + str(item.damage) + ' Damage | Sells for: ' + str(item.cost//2) + ' Gold')
             elif item.type == 'armour':
-                print(item.name + ': Reduces damage by ' + str(self.defense) + '% | ' + 'Maximum protection is ' + str(self.maxProtection) + ' Damage | Sells for: ' + str(item.cost//2) + ' Gold')
+                print(item.name + ': Reduces damage by ' + str(item.defense) + '% | ' + 'Maximum protection is ' + str(item.maxProtection) + ' Damage | Sells for: ' + str(item.cost//2) + ' Gold')
             i += 1
         print(cDict['reset'], end='')
 
@@ -1040,7 +1036,7 @@ class Trader(object):
                             if not choice == 0:
                                 if not choice > len(player.inventory):
                                     item = player.inventory[choice - 1]
-                                    if (item.type == 'weapon' or item.type == 'armour') and not item.quality == 0:
+                                    if (item.type == 'weapon' or item.type == 'armour') and not item.quality == 0 and (item != player.currentWeapon and item != player.currentArmour):
                                         player.gold += item.cost//2
                                         player.inventoryRemove(player.inventory.index(item))
                                         print('You sold: ' + item.name + ' for ' + str(item.cost//2) + ' Gold')
