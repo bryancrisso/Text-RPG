@@ -850,9 +850,7 @@ class Trader(object):
                 else:
                     break
 
-            if random.randint(
-                    1,
-                    3) == 1:  #1/3 chance for trader to sell an epic food item
+            if random.randint(1,3) == 1:  #1/3 chance for trader to sell an epic food item
                 eligibleFood = []
                 for item in foodDictionary:  #add epic items to list choice
                     if self.difficulty == item.level and item.quality == 3 and item != self.baseItem:
@@ -862,9 +860,7 @@ class Trader(object):
                     self.sales.append(choice)
                     eligibleFood.remove(choice)
 
-            if random.randint(
-                    1, 4
-            ) == 1:  #1/4 chance for trader to sell an legendary food item
+            if random.randint(1, 4) == 1:  #1/4 chance for trader to sell an legendary food item
                 eligibleFood = []
                 for item in foodDictionary:  #add legendary items to list choice
                     if self.difficulty == item.level and item.quality == 4 and item != self.baseItem:
@@ -941,11 +937,11 @@ class Trader(object):
                 print(cDict['yellow'], end='')
             print(str(i) + ': ', end='')
             if item.type == 'food':
-                print(item.name + ': Regenerates ' + str(item.healthRegen) +
-                      ' Health | Cost: ' + str(item.cost) + ' Gold')
+                print(item.name + ': Regenerates ' + str(item.healthRegen) + ' Health | Cost: ' + str(item.cost) + ' Gold')
             elif item.type == 'weapon':
-                print(item.name + ': Deals ' + str(item.damage) +
-                      ' Damage | Cost: ' + str(item.cost) + ' Gold')
+                print(item.name + ': Deals ' + str(item.damage) + ' Damage | Cost: ' + str(item.cost) + ' Gold')
+            elif item.type == 'armour':
+                print(item.name + ': Reduces damage by ' + str(item.defense) + '% | ' + 'Maximum protection is ' + str(item.maxProtection) + ' Damage | Cost: ' + str(item.cost) + ' Gold')
             i += 1
         print(cDict['reset'], end='')
     def displayPlayerSales(self, player):
@@ -976,7 +972,7 @@ class Trader(object):
             print(cDict['green'], end='')
             choices = ['0', '1', '2']
             print("\n        1 - Buy From the Trader's Stock")
-            print("        2 - Sell your items to the Trader (not quite yet)")
+            print("        2 - Sell your items to the Trader")
             if self.type == 'blacksmith':
                 choices.append('3')
                 choices.append('4')
