@@ -4,11 +4,15 @@ from Text_RPG_Weapon import *
 from Text_RPG_Enemy import *
 from Text_RPG_Armour import *
 
-foodDictionary = [Bread, Apple, CornishPasty, SteamedHam, Beans, Cherries, Steak, TinOfBiscuits, BleachBottle, CheeseSandwich, FullEnglishBreakfast, LambShank, FishAndChips, Olives, SausageRoll]
+foodDictionary = [Bread, Apple, CornishPasty, SteamedHam, Beans, Cherries, Steak, TinOfBiscuits, BleachBottle, CheeseSandwich, 
+                FullEnglishBreakfast, LambShank, FishAndChips, Olives, SausageRoll]
 
-weaponDictionary = [Fists, TrustyDagger, ShoddyShank, BattleAxe, Lance, Katana, Club, BroadSword, StilettoKnife, SteelAxe, SilverSabre, MagnesiumKnife, AluminiumMallet, IronCutlass, RubySpear, ThrowingKnife, TitaniumAxe, Mace]
+weaponDictionary = [Fists, TrustyDagger, ShoddyShank, BattleAxe, Lance, Katana, Club, BroadSword, StilettoKnife, SteelAxe, 
+                SilverSabre, MagnesiumKnife, AluminiumMallet, IronCutlass, RubySpear, ThrowingKnife, TitaniumAxe, Mace]
 
-enemyDictionary = [Mutant, Brute, Skeleton, KnifeGoblin, Ghoul, MutantGuard, ThiccArab, DarkKnight, Drunk, Knight, Giant, Looter, Samurai, Goblin, PoisonousSpider, Hound, WildBoar, Hunter, MutantWarrior, HostileTrader, BruteGuard, Primitive, PrimitiveLeader, PrimitiveSlave, PrimitiveGuard]
+enemyDictionary = [Mutant, Brute, Skeleton, KnifeGoblin, Ghoul, MutantGuard, ThiccArab, DarkKnight, Drunk, Knight, Giant, 
+                Looter, Samurai, Goblin, PoisonousSpider, Hound, WildBoar, Hunter, MutantWarrior, HostileTrader, 
+                BruteGuard, Primitive, PrimitiveLeader, PrimitiveSlave, PrimitiveGuard]
 
 armourDictionary = [ClothArmour, LeatherArmour, ChainArmour, PlateArmour, HeavyPlateArmour, TinSuit]
 
