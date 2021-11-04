@@ -1,11 +1,16 @@
-import random, pickle, os, colorama
-from Text_RPG_Food import *
-from dictionaries import *
-from Text_RPG_Enemy import *
-from Text_RPG_Armour import *
-from colorama import Back, Fore, Style
-import generator
+import os
+import pickle
+import random
 from math import sqrt
+
+import colorama
+from colorama import Back, Fore, Style
+
+import generator
+from dictionaries import foodDictionary, weaponDictionary, armourDictionary, enemyDictionary, itemDictionary, grocerBaseItems, blacksmithBaseItems, foodBlacklist
+from Text_RPG_Armour import ClothArmour
+from Text_RPG_Food import Bread
+from Text_RPG_Weapon import TrustyDagger, Fists
 
 #create time.txt and inventory.dat and stats.dat
 f = open('time.txt', 'a')
@@ -412,16 +417,19 @@ _____.___.              ________  .__           .___
     def sortInventory(self, choice):
         if choice == 1:  #default sorting
 
-            def myFunc(e):
+            def qualitySort(e):
                 return e.quality
 
+<<<<<<< Updated upstream
             self.inventory.sort(key=myFunc, reverse=True)  #sorts by quality descending
+=======
+            self.inventory.sort(key=qualitySort, reverse=True)  #sorts by quality descending
+>>>>>>> Stashed changes
 
-            def myFunc(e):
+            def typeSort(e):
                 return e.type
 
-            self.inventory.sort(
-                key=myFunc, reverse=True)  #sorts by type descending
+            self.inventory.sort(key=typeSort, reverse=True)  #sorts by type descending
 
     def __init__(self, newGame):
         firstTime = self.firstTimeManager()
@@ -661,8 +669,8 @@ ___________              __ ____________________  ________
                         player.attack(enemy)
                         hasAttacked = True
                     elif choice == '2':
-                        return random.randint(1, 3)
                         hasAttacked = True
+                        return random.randint(1, 3)
                     elif choice == '3':
                         if eatCount <= 5:
                             player.eat()
@@ -763,47 +771,31 @@ class DungeonCreator(object):
                         elif content == 'L':
                             eligibleFood = []
                             eligibleWeapon = []
-                            foodQuality = random.choices([1, 2, 3, 4],
-                                                         weights=(60, 25, 10,
-                                                                  5),
-                                                         k=1)
+                            foodQuality = random.choices([1, 2, 3, 4], weights=(60, 25, 10, 5), k=1)
                             for item in foodDictionary:
-                                if difficulty == item.level and foodQuality[
-                                        0] == item.quality and item not in foodBlacklist:
+                                if difficulty == item.level and foodQuality[0] == item.quality and item not in foodBlacklist:
                                     eligibleFood.append(item)
                             if eligibleFood == []:
                                 eligibleFood = foodDictionary
 
-                            weaponQuality = random.choices([1, 2, 3, 4],
-                                                           weights=(60, 25, 10,
-                                                                    5),
-                                                           k=1)
+                            weaponQuality = random.choices([1, 2, 3, 4], weights=(60, 25, 10, 5), k=1)
                             if random.randint(1, 3) == 1:
                                 for item in weaponDictionary + armourDictionary:
-                                    if difficulty == item.level and weaponQuality[
-                                            0] == item.quality:
+                                    if difficulty == item.level and weaponQuality[0] == item.quality:
                                         eligibleWeapon.append(item)
                                 if eligibleWeapon == []:
-                                    eligibleWeapon = weaponDictionary[
-                                        1:] + armourDictionary[
-                                            1:]  #do not include fists or cloth clothes
+                                    eligibleWeapon = weaponDictionary[1:] + armourDictionary[1:]  #do not include fists or cloth clothes
 
                             if eligibleWeapon != []:
-                                j.loot = [
-                                    random.choice(eligibleFood),
-                                    random.choice(eligibleWeapon)
-                                ]
+                                j.loot = [random.choice(eligibleFood), random.choice(eligibleWeapon)]
                             else:
                                 j.loot = [random.choice(eligibleFood)]
 
                         elif content == 'T':
-                            j.trader = Trader(
-                                random.choice(['grocer', 'blacksmith']), floor)
+                            j.trader = Trader(random.choice(['grocer', 'blacksmith']), floor)
         return array
 
-    def findFloorSize(
-            self, a, d,
-            e):  #find the factors, b and c, of a, in the ratio d and e
+    def findFloorSize(self, a, d, e):  #find the factors, b and c, of a, in the ratio d and e
         b = round(d * sqrt(a / (d * e)))
         c = round(e * sqrt(a / (d * e)))
         return (b, c)
