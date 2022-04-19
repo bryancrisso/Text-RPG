@@ -420,11 +420,7 @@ _____.___.              ________  .__           .___
             def qualitySort(e):
                 return e.quality
 
-<<<<<<< Updated upstream
-            self.inventory.sort(key=myFunc, reverse=True)  #sorts by quality descending
-=======
             self.inventory.sort(key=qualitySort, reverse=True)  #sorts by quality descending
->>>>>>> Stashed changes
 
             def typeSort(e):
                 return e.type
